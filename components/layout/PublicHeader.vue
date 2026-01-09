@@ -39,8 +39,8 @@ const isOpen = ref(false);
   position: sticky;
   top: 0;
   z-index: $z-header;
-  background: $color-white;
-  border-bottom: 1px solid $color-gray-200;
+  background: linear-gradient(90deg, rgba($color-primary, 0.08) 0%, rgba($color-primary, 0.04) 50%, $color-white 100%);
+  border-bottom: 1px solid rgba($color-primary, 0.1);
 
   &__container {
     max-width: 1200px;
