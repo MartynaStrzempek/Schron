@@ -87,13 +87,6 @@ img {
   }
 }
 
-.btn {
-  &--accent {
-    background: $color-accent;
-    color: $color-white;
-  }
-}
-
 /* Naive UI button lift transition (desktop only) */
 .n-button {
   @media (min-width: $breakpoint-tablet) {
