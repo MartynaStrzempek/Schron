@@ -1,0 +1,81 @@
+{
+  "shelter": {
+    "name": "Schronisko Nadzieja",
+    "phone": "+48 600 123 456",
+    "email": "kontakt@schronisko-nadzieja.pl",
+    "address": "ul. Leśna 12, 00-001 Warszawa",
+    "openingHours": "Pon-Pt 9:00–17:00, Sob 10:00–14:00",
+    "adoptionFormUrl": "https://example.org/ankieta-adopcyjna",
+    "mapEmbedUrl": "https://maps.google.com/maps?q=Warszawa&t=&z=13&ie=UTF8&iwloc=&output=embed"
+  },
+  "animals": [
+    {
+      "id": "a1",
+      "name": "Luna",
+      "type": "kot",
+      "age": "dorosły",
+      "gender": "samica",
+      "size": "mała",
+      "description": "Spokojna kotka, która uwielbia pieszczoty i towarzystwo ludzi.",
+      "intakeDate": "2024-01-18",
+      "status": "do adopcji",
+      "urgent": false,
+      "featured": true,
+      "photos": [
+        "https://placehold.co/800x600?text=Luna",
+        "https://placehold.co/800x600?text=Luna+2"
+      ]
+    },
+    {
+      "id": "a2",
+      "name": "Borys",
+      "type": "pies",
+      "age": "senior",
+      "gender": "samiec",
+      "size": "duża",
+      "description": "Wierny i łagodny pies, który szuka spokojnego domu.",
+      "intakeDate": "2023-10-03",
+      "status": "w trakcie",
+      "urgent": true,
+      "featured": true,
+      "photos": [
+        "https://placehold.co/800x600?text=Borys",
+        "https://placehold.co/800x600?text=Borys+2"
+      ]
+    },
+    {
+      "id": "a3",
+      "name": "Misia",
+      "type": "kot",
+      "age": "młody",
+      "gender": "samica",
+      "size": "mała",
+      "description": "Radosna i energiczna, uwielbia zabawy z piłeczką.",
+      "intakeDate": "2024-03-12",
+      "status": "do adopcji",
+      "urgent": false,
+      "featured": false,
+      "photos": [
+        "https://placehold.co/800x600?text=Misia",
+        "https://placehold.co/800x600?text=Misia+2"
+      ]
+    },
+    {
+      "id": "a4",
+      "name": "Riko",
+      "type": "pies",
+      "age": "dorosły",
+      "gender": "samiec",
+      "size": "średnia",
+      "description": "Aktywny pies, idealny kompan na długie spacery.",
+      "intakeDate": "2024-02-05",
+      "status": "po adopcji",
+      "urgent": false,
+      "featured": false,
+      "photos": [
+        "https://placehold.co/800x600?text=Riko",
+        "https://placehold.co/800x600?text=Riko+2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+<template>
+  <div class="admin__topbar">
+    <div class="topbar">
+      <button
+        v-if="showMobileToggle"
+        class="topbar__menu"
+        type="button"
+        aria-label="Otwórz menu"
+        @click="openDrawer?.()"
+      >
+        ☰
+      </button>
+      <h1 class="topbar__title">{{ title }}</h1>
+    </div>
+    <div class="topbar__actions">
+      <n-button v-if="showBack" secondary @click="navigateBack">Wróć</n-button>
+      <n-button v-if="showLogout" tertiary @click="logout">Wyloguj</n-button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, inject } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { NButton } from 'naive-ui';
+
+const props = defineProps<{ title: string; showBack?: boolean }>();
+const openDrawer = inject<() => void>('openAdminDrawer');
+const route = useRoute();
+const router = useRouter();
+
+const showMobileToggle = computed(() => route.path !== '/admin/login');
+const showLogout = computed(() => route.path !== '/admin/login');
+
+const navigateBack = () => {
+  router.back();
+};
+
+const logout = () => {
+  const authCookie = useCookie('admin_auth');
+  authCookie.value = null;
+  router.push('/admin/login');
+};
+</script>
+
+<style scoped lang="scss">
+@use '~/assets/scss/variables' as *;
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  &__menu {
+    border: 1px solid $color-gray-200;
+    background: $color-white;
+    padding: $spacing-2 $spacing-3;
+    border-radius: $radius-sm;
+
+    @media (min-width: $breakpoint-tablet) {
+      display: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-2;
+  }
+}
+</style>

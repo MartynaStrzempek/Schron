@@ -1,0 +1,47 @@
+<template>
+  <aside class="sidebar" aria-label="Panel administracyjny">
+    <div class="sidebar__brand">Panel admina</div>
+    <nav class="sidebar__nav">
+      <NuxtLink class="sidebar__link" to="/admin" @click="$emit('navigate')">Dashboard</NuxtLink>
+      <NuxtLink class="sidebar__link" to="/admin/animals" @click="$emit('navigate')">Zwierzęta</NuxtLink>
+      <NuxtLink class="sidebar__link" to="/" @click="$emit('navigate')">Strona publiczna</NuxtLink>
+    </nav>
+  </aside>
+</template>
+
+<script setup lang="ts">
+defineEmits<{ (event: 'navigate'): void }>();
+</script>
+
+<style scoped lang="scss">
+@use '~/assets/scss/variables' as *;
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+
+  &__brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__link {
+    padding: $spacing-2 $spacing-3;
+    border-radius: $radius-sm;
+    background: $color-gray-100;
+    font-weight: 500;
+
+    &.router-link-active {
+      background: rgba($color-primary, 0.15);
+      color: $color-primary-600;
+    }
+  }
+}
+</style>

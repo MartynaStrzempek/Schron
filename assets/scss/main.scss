@@ -1,0 +1,150 @@
+@use './variables' as *;
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-gray-900;
+  background: $color-gray-50;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.page {
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing-8 $spacing-4;
+
+    @media (min-width: $breakpoint-tablet) {
+      padding: $spacing-10 $spacing-6;
+    }
+  }
+
+  &__title {
+    font-size: 2rem;
+    margin-bottom: $spacing-6;
+  }
+}
+
+.section {
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    margin-bottom: $spacing-6;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    margin: 0;
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: $color-gray-500;
+  }
+}
+
+.btn {
+  &--accent {
+    background: $color-accent;
+    color: $color-white;
+  }
+}
+
+.sticky-cta {
+  position: sticky;
+  bottom: $spacing-4;
+  z-index: $z-sticky;
+  display: flex;
+  gap: $spacing-3;
+  padding: $spacing-3;
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+
+  @media (min-width: $breakpoint-tablet) {
+    display: none;
+  }
+}
+
+.form {
+  &__summary {
+    background: rgba($color-danger, 0.1);
+    border: 1px solid rgba($color-danger, 0.2);
+    color: $color-danger;
+    padding: $spacing-3;
+    border-radius: $radius-sm;
+    margin-bottom: $spacing-4;
+  }
+}
+
+.admin {
+  &__layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+
+    @media (min-width: $breakpoint-tablet) {
+      grid-template-columns: 240px 1fr;
+    }
+  }
+
+  &__sidebar {
+    background: $color-white;
+    border-right: 1px solid $color-gray-200;
+    padding: $spacing-6 $spacing-4;
+    height: 100%;
+  }
+
+  &__sidebar--desktop {
+    display: none;
+
+    @media (min-width: $breakpoint-tablet) {
+      display: block;
+    }
+  }
+
+  &__content {
+    background: $color-gray-50;
+    min-height: 100vh;
+  }
+
+  &__topbar {
+    padding: $spacing-4 $spacing-6;
+    background: $color-white;
+    border-bottom: 1px solid $color-gray-200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

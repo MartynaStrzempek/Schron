@@ -1,0 +1,2572 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/README.md b/README.md
+index 7d115130fddf4905bf3bc2be1d6e8639d8f03484..18ae1399290691a378d68197b662431cac663fcf 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,55 @@
+-# Schron
+\ No newline at end of file
++# Schronisko Nadzieja (Nuxt 3)
++
++Frontendowa aplikacja SSR dla schroniska zwierząt. Dane pochodzą wyłącznie z lokalnego `mock_data.json`.
++
++## Uruchomienie projektu
++
++```bash
++npm install
++npm run dev
++```
++
++## Dane
++
++Dane znajdują się w pliku `data/mock_data.json` i są ładowane bezpośrednio przez warstwę repozytoriów (`repositories/`).
++
++## Logowanie administratora
++
++Logowanie jest **frontend-only**. Po poprawnym logowaniu ustawiany jest cookie `admin_auth`, a dostęp do `/admin/**` chroni middleware.
++W kodzie znajduje się komentarz, że to placeholder do podmiany na prawdziwy backend.
++
++## Kluczowe trasy (routes)
++
++- `/` – strona główna
++- `/animals` – lista zwierząt
++- `/animals/:id` – karta zwierzęcia
++- `/contact` – kontakt
++- `/admin/login` – logowanie admina
++- `/admin` – dashboard
++- `/admin/animals` – zarządzanie zwierzętami
++- `/admin/animals/new` – dodawanie zwierzęcia
++- `/admin/animals/:id/edit` – edycja zwierzęcia
++
++## Mapa struktury katalogów
++
++```
++assets/
++  scss/
++components/
++  admin/
++  cards/
++  common/
++  forms/
++  layout/
++  modals/
++  ui/
++data/
++layouts/
++middleware/
++pages/
++  admin/
++  animals/
++repositories/
++store/
++types/
++```
+diff --git a/app.vue b/app.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..b8fa1209689b8358922e317f2f1f64e4e892186d
+--- /dev/null
++++ b/app.vue
+@@ -0,0 +1,23 @@
++<template>
++  <n-config-provider :theme-overrides="themeOverrides">
++    <n-message-provider>
++      <NuxtLayout>
++        <NuxtPage />
++      </NuxtLayout>
++    </n-message-provider>
++  </n-config-provider>
++</template>
++
++<script setup lang="ts">
++import { NConfigProvider, NMessageProvider, type GlobalThemeOverrides } from 'naive-ui';
++
++const themeOverrides: GlobalThemeOverrides = {
++  common: {
++    primaryColor: '#2F855A',
++    primaryColorHover: '#276749',
++    primaryColorPressed: '#22543D',
++    borderRadius: '12px',
++    fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
++  }
++};
++</script>
+diff --git a/assets/scss/_variables.scss b/assets/scss/_variables.scss
+new file mode 100644
+index 0000000000000000000000000000000000000000..614a56721651d7f72e11d61b236bd0fe9a4561fc
+--- /dev/null
++++ b/assets/scss/_variables.scss
+@@ -0,0 +1,42 @@
++$color-white: #ffffff;
++$color-gray-50: #f9fafb;
++$color-gray-100: #f3f4f6;
++$color-gray-200: #e5e7eb;
++$color-gray-500: #6b7280;
++$color-gray-700: #374151;
++$color-gray-900: #111827;
++$color-primary: #2f855a;
++$color-primary-600: #276749;
++$color-accent: #f97316;
++$color-success: #16a34a;
++$color-warning: #f59e0b;
++$color-danger: #dc2626;
++
++$font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
++$font-size-base: 16px;
++$line-height-base: 1.6;
++
++$spacing-1: 4px;
++$spacing-2: 8px;
++$spacing-3: 12px;
++$spacing-4: 16px;
++$spacing-5: 20px;
++$spacing-6: 24px;
++$spacing-8: 32px;
++$spacing-10: 40px;
++$spacing-12: 48px;
++$spacing-16: 64px;
++
++$radius-sm: 8px;
++$radius-md: 12px;
++$radius-lg: 16px;
++
++$shadow-sm: 0 4px 12px rgba(17, 24, 39, 0.08);
++$shadow-md: 0 8px 24px rgba(17, 24, 39, 0.12);
++
++$transition-base: 200ms ease;
++$z-header: 20;
++$z-sticky: 30;
++
++$breakpoint-tablet: 768px;
++$breakpoint-desktop: 1024px;
+diff --git a/assets/scss/main.scss b/assets/scss/main.scss
+new file mode 100644
+index 0000000000000000000000000000000000000000..d0b001ebbb4b5591860616e1d2f08e15e765d724
+--- /dev/null
++++ b/assets/scss/main.scss
+@@ -0,0 +1,150 @@
++@use './variables' as *;
++
++:root {
++  color-scheme: light;
++}
++
++* {
++  box-sizing: border-box;
++}
++
++body {
++  margin: 0;
++  font-family: $font-family-base;
++  font-size: $font-size-base;
++  line-height: $line-height-base;
++  color: $color-gray-900;
++  background: $color-gray-50;
++}
++
++a {
++  color: inherit;
++  text-decoration: none;
++}
++
++img {
++  max-width: 100%;
++  display: block;
++}
++
++.visually-hidden {
++  position: absolute;
++  width: 1px;
++  height: 1px;
++  padding: 0;
++  margin: -1px;
++  overflow: hidden;
++  clip: rect(0, 0, 0, 0);
++  border: 0;
++}
++
++.page {
++  &__container {
++    max-width: 1200px;
++    margin: 0 auto;
++    padding: $spacing-8 $spacing-4;
++
++    @media (min-width: $breakpoint-tablet) {
++      padding: $spacing-10 $spacing-6;
++    }
++  }
++
++  &__title {
++    font-size: 2rem;
++    margin-bottom: $spacing-6;
++  }
++}
++
++.section {
++  &__header {
++    display: flex;
++    flex-direction: column;
++    gap: $spacing-2;
++    margin-bottom: $spacing-6;
++  }
++
++  &__title {
++    font-size: 1.75rem;
++    margin: 0;
++  }
++
++  &__subtitle {
++    margin: 0;
++    color: $color-gray-500;
++  }
++}
++
++.btn {
++  &--accent {
++    background: $color-accent;
++    color: $color-white;
++  }
++}
++
++.sticky-cta {
++  position: sticky;
++  bottom: $spacing-4;
++  z-index: $z-sticky;
++  display: flex;
++  gap: $spacing-3;
++  padding: $spacing-3;
++  background: $color-white;
++  border-radius: $radius-lg;
++  box-shadow: $shadow-md;
++
++  @media (min-width: $breakpoint-tablet) {
++    display: none;
++  }
++}
++
++.form {
++  &__summary {
++    background: rgba($color-danger, 0.1);
++    border: 1px solid rgba($color-danger, 0.2);
++    color: $color-danger;
++    padding: $spacing-3;
++    border-radius: $radius-sm;
++    margin-bottom: $spacing-4;
++  }
++}
++
++.admin {
++  &__layout {
++    min-height: 100vh;
++    display: grid;
++    grid-template-columns: 1fr;
++
++    @media (min-width: $breakpoint-tablet) {
++      grid-template-columns: 240px 1fr;
++    }
++  }
++
++  &__sidebar {
++    background: $color-white;
++    border-right: 1px solid $color-gray-200;
++    padding: $spacing-6 $spacing-4;
++    height: 100%;
++  }
++
++  &__sidebar--desktop {
++    display: none;
++
++    @media (min-width: $breakpoint-tablet) {
++      display: block;
++    }
++  }
++
++  &__content {
++    background: $color-gray-50;
++    min-height: 100vh;
++  }
++
++  &__topbar {
++    padding: $spacing-4 $spacing-6;
++    background: $color-white;
++    border-bottom: 1px solid $color-gray-200;
++    display: flex;
++    align-items: center;
++    justify-content: space-between;
++  }
++}
+diff --git a/components/cards/AnimalCard.vue b/components/cards/AnimalCard.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..4335601179080ba9059e0b8cc301a617ef85fea5
+--- /dev/null
++++ b/components/cards/AnimalCard.vue
+@@ -0,0 +1,67 @@
++<template>
++  <n-card class="animal-card" :title="animal.name" :segmented="{ content: true }">
++    <template #cover>
++      <img :src="animal.photos[0]" :alt="animal.name" class="animal-card__image" />
++    </template>
++    <div class="animal-card__meta">
++      <n-tag type="success" size="small">{{ animal.status }}</n-tag>
++      <n-tag v-if="animal.urgent" type="warning" size="small">Pilne</n-tag>
++    </div>
++    <p class="animal-card__description">{{ animal.description }}</p>
++    <div class="animal-card__details">
++      <span>{{ animal.age }}</span>
++      <span>•</span>
++      <span>{{ animal.gender }}</span>
++      <span>•</span>
++      <span>{{ animal.size }}</span>
++    </div>
++    <template #footer>
++      <NuxtLink class="animal-card__link" :to="`/animals/${animal.id}`">Poznaj {{ animal.name }}</NuxtLink>
++    </template>
++  </n-card>
++</template>
++
++<script setup lang="ts">
++import { NCard, NTag } from 'naive-ui';
++import type { Animal } from '~/types/animal';
++
++defineProps<{ animal: Animal }>();
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.animal-card {
++  border-radius: $radius-lg;
++  box-shadow: $shadow-sm;
++
++  &__image {
++    width: 100%;
++    height: 220px;
++    object-fit: cover;
++  }
++
++  &__meta {
++    display: flex;
++    gap: $spacing-2;
++    margin-bottom: $spacing-2;
++  }
++
++  &__description {
++    margin: 0 0 $spacing-2;
++    color: $color-gray-500;
++  }
++
++  &__details {
++    display: flex;
++    gap: $spacing-2;
++    color: $color-gray-700;
++    font-size: 0.9rem;
++  }
++
++  &__link {
++    color: $color-primary;
++    font-weight: 600;
++  }
++}
++</style>
+diff --git a/components/common/StickyCta.vue b/components/common/StickyCta.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..533d195b495ad72953b12371323bee8884a02abf
+--- /dev/null
++++ b/components/common/StickyCta.vue
+@@ -0,0 +1,41 @@
++<template>
++  <div class="sticky-cta" aria-label="Szybkie akcje">
++    <a class="sticky-cta__button" :href="`tel:${shelter.phone}`" aria-label="Zadzwoń">
++      Zadzwoń
++    </a>
++    <NuxtLink class="sticky-cta__button sticky-cta__button--accent" to="/animals" aria-label="Adoptuj">
++      Adoptuj
++    </NuxtLink>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed } from 'vue';
++import { getShelterInfo } from '~/repositories/shelter';
++
++const { data } = await useAsyncData('shelter-info-cta', getShelterInfo);
++
++const shelter = computed(() => ({
++  phone: data.value?.phone ?? ''
++}));
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.sticky-cta {
++  &__button {
++    flex: 1;
++    text-align: center;
++    padding: $spacing-3;
++    border-radius: $radius-md;
++    background: $color-primary;
++    color: $color-white;
++    font-weight: 600;
++
++    &--accent {
++      background: $color-accent;
++    }
++  }
++}
++</style>
+diff --git a/components/forms/AnimalForm.vue b/components/forms/AnimalForm.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..93a83e7e6a58bec461ea1f27a42c934c6cbdb2d5
+--- /dev/null
++++ b/components/forms/AnimalForm.vue
+@@ -0,0 +1,154 @@
++<template>
++  <n-form
++    ref="formRef"
++    :model="form"
++    :rules="rules"
++    label-placement="top"
++    class="animal-form"
++    @submit.prevent="handleSubmit"
++  >
++    <div v-if="hasSubmitErrors" class="form__summary" role="alert">
++      Uzupełnij wszystkie wymagane pola.
++    </div>
++    <div class="animal-form__grid">
++      <n-form-item label="Imię" path="name" required>
++        <n-input v-model:value="form.name" placeholder="np. Luna" />
++      </n-form-item>
++      <n-form-item label="Typ" path="type" required>
++        <n-select v-model:value="form.type" :options="typeOptions" />
++      </n-form-item>
++      <n-form-item label="Wiek" path="age" required>
++        <n-select v-model:value="form.age" :options="ageOptions" />
++      </n-form-item>
++      <n-form-item label="Płeć" path="gender" required>
++        <n-select v-model:value="form.gender" :options="genderOptions" />
++      </n-form-item>
++      <n-form-item label="Wielkość" path="size" required>
++        <n-select v-model:value="form.size" :options="sizeOptions" />
++      </n-form-item>
++      <n-form-item label="Status adopcyjny" path="status" required>
++        <n-select v-model:value="form.status" :options="statusOptions" />
++      </n-form-item>
++      <n-form-item label="Data przyjęcia" path="intakeDate" required>
++        <n-input v-model:value="form.intakeDate" type="date" />
++      </n-form-item>
++    </div>
++    <n-form-item label="Opis" path="description" required>
++      <n-input v-model:value="form.description" type="textarea" placeholder="Krótki opis zwierzęcia" />
++    </n-form-item>
++    <n-form-item label="Linki do zdjęć" path="photos" required>
++      <n-dynamic-input v-model:value="form.photos" placeholder="https://" />
++    </n-form-item>
++    <n-checkbox v-model:checked="form.urgent">Pilne</n-checkbox>
++    <n-checkbox v-model:checked="form.featured">Wyróżnione</n-checkbox>
++    <div class="animal-form__actions">
++      <n-button type="primary" attr-type="submit" :loading="saving" :disabled="saving">
++        Zapisz
++      </n-button>
++    </div>
++  </n-form>
++</template>
++
++<script setup lang="ts">
++import { ref, watch } from 'vue';
++import {
++  NButton,
++  NCheckbox,
++  NDynamicInput,
++  NForm,
++  NFormItem,
++  NInput,
++  NSelect
++} from 'naive-ui';
++import type { Animal } from '~/types/animal';
++
++const props = defineProps<{ initialValue: Animal }>();
++const emit = defineEmits<{ (event: 'save', value: Animal): void }>();
++
++const formRef = ref<InstanceType<typeof NForm> | null>(null);
++const saving = ref(false);
++const hasSubmitErrors = ref(false);
++
++const form = ref<Animal>({ ...props.initialValue });
++
++watch(
++  () => props.initialValue,
++  (value) => {
++    form.value = { ...value };
++  }
++);
++
++const typeOptions = [
++  { label: 'Pies', value: 'pies' },
++  { label: 'Kot', value: 'kot' }
++];
++const ageOptions = [
++  { label: 'Młody', value: 'młody' },
++  { label: 'Dorosły', value: 'dorosły' },
++  { label: 'Senior', value: 'senior' }
++];
++const genderOptions = [
++  { label: 'Samiec', value: 'samiec' },
++  { label: 'Samica', value: 'samica' }
++];
++const sizeOptions = [
++  { label: 'Mała', value: 'mała' },
++  { label: 'Średnia', value: 'średnia' },
++  { label: 'Duża', value: 'duża' }
++];
++const statusOptions = [
++  { label: 'Do adopcji', value: 'do adopcji' },
++  { label: 'W trakcie', value: 'w trakcie' },
++  { label: 'Po adopcji', value: 'po adopcji' }
++];
++
++const rules = {
++  name: { required: true, message: 'Imię jest wymagane', trigger: ['blur', 'input'] },
++  type: { required: true, message: 'Typ jest wymagany', trigger: ['blur', 'change'] },
++  age: { required: true, message: 'Wiek jest wymagany', trigger: ['blur', 'change'] },
++  gender: { required: true, message: 'Płeć jest wymagana', trigger: ['blur', 'change'] },
++  size: { required: true, message: 'Wielkość jest wymagana', trigger: ['blur', 'change'] },
++  status: { required: true, message: 'Status jest wymagany', trigger: ['blur', 'change'] },
++  intakeDate: { required: true, message: 'Data przyjęcia jest wymagana', trigger: ['blur', 'input'] },
++  description: { required: true, message: 'Opis jest wymagany', trigger: ['blur', 'input'] },
++  photos: { required: true, message: 'Dodaj przynajmniej jedno zdjęcie', trigger: ['blur', 'change'] }
++};
++
++const handleSubmit = async () => {
++  hasSubmitErrors.value = false;
++  const valid = await formRef.value?.validate().then(() => true).catch(() => false);
++  if (!valid) {
++    hasSubmitErrors.value = true;
++    return;
++  }
++  saving.value = true;
++  setTimeout(() => {
++    saving.value = false;
++    emit('save', { ...form.value, photos: form.value.photos.filter(Boolean) });
++  }, 600);
++};
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.animal-form {
++  background: $color-white;
++  padding: $spacing-6;
++  border-radius: $radius-lg;
++  box-shadow: $shadow-sm;
++
++  &__grid {
++    display: grid;
++    gap: $spacing-4;
++
++    @media (min-width: $breakpoint-tablet) {
++      grid-template-columns: repeat(2, minmax(0, 1fr));
++    }
++  }
++
++  &__actions {
++    margin-top: $spacing-4;
++  }
++}
++</style>
+diff --git a/components/forms/ContactForm.vue b/components/forms/ContactForm.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..5575cfdef72e18ac21a32288da1338a38c0df9f9
+--- /dev/null
++++ b/components/forms/ContactForm.vue
+@@ -0,0 +1,93 @@
++<template>
++  <n-form
++    ref="formRef"
++    :model="form"
++    :rules="rules"
++    label-placement="top"
++    class="contact-form"
++    @submit.prevent="handleSubmit"
++  >
++    <div v-if="hasSubmitErrors" class="form__summary" role="alert">
++      Uzupełnij wymagane pola, aby wysłać wiadomość.
++    </div>
++    <n-form-item label="Imię i nazwisko" path="name" required>
++      <n-input v-model:value="form.name" placeholder="Wpisz swoje imię" />
++    </n-form-item>
++    <n-form-item label="Email" path="email" required>
++      <n-input v-model:value="form.email" type="email" placeholder="twoj@email.pl" />
++    </n-form-item>
++    <n-form-item label="Wiadomość" path="message" required>
++      <n-input v-model:value="form.message" type="textarea" placeholder="Napisz wiadomość" />
++    </n-form-item>
++    <n-button type="primary" attr-type="submit" :loading="submitting" :disabled="submitting">
++      Wyślij wiadomość
++    </n-button>
++    <p v-if="successMessage" class="contact-form__success" role="status">{{ successMessage }}</p>
++  </n-form>
++</template>
++
++<script setup lang="ts">
++import { ref } from 'vue';
++import { NButton, NForm, NFormItem, NInput } from 'naive-ui';
++
++const formRef = ref<InstanceType<typeof NForm> | null>(null);
++const submitting = ref(false);
++const successMessage = ref('');
++const hasSubmitErrors = ref(false);
++
++const form = ref({
++  name: '',
++  email: '',
++  message: ''
++});
++
++const rules = {
++  name: {
++    required: true,
++    message: 'Imię jest wymagane',
++    trigger: ['blur', 'input']
++  },
++  email: {
++    required: true,
++    message: 'Email jest wymagany',
++    trigger: ['blur', 'input']
++  },
++  message: {
++    required: true,
++    message: 'Wiadomość jest wymagana',
++    trigger: ['blur', 'input']
++  }
++};
++
++const handleSubmit = async () => {
++  hasSubmitErrors.value = false;
++  successMessage.value = '';
++  const valid = await formRef.value?.validate().then(() => true).catch(() => false);
++  if (!valid) {
++    hasSubmitErrors.value = true;
++    return;
++  }
++  submitting.value = true;
++  setTimeout(() => {
++    submitting.value = false;
++    successMessage.value = 'Dziękujemy za wiadomość. Skontaktujemy się wkrótce.';
++    form.value = { name: '', email: '', message: '' };
++  }, 800);
++};
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.contact-form {
++  background: $color-white;
++  padding: $spacing-6;
++  border-radius: $radius-lg;
++  box-shadow: $shadow-sm;
++
++  &__success {
++    margin-top: $spacing-4;
++    color: $color-success;
++  }
++}
++</style>
+diff --git a/components/layout/AdminSidebar.vue b/components/layout/AdminSidebar.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..12e077d96a13c2401d0b73da903ea98f12f9f1e1
+--- /dev/null
++++ b/components/layout/AdminSidebar.vue
+@@ -0,0 +1,47 @@
++<template>
++  <aside class="sidebar" aria-label="Panel administracyjny">
++    <div class="sidebar__brand">Panel admina</div>
++    <nav class="sidebar__nav">
++      <NuxtLink class="sidebar__link" to="/admin" @click="$emit('navigate')">Dashboard</NuxtLink>
++      <NuxtLink class="sidebar__link" to="/admin/animals" @click="$emit('navigate')">Zwierzęta</NuxtLink>
++      <NuxtLink class="sidebar__link" to="/" @click="$emit('navigate')">Strona publiczna</NuxtLink>
++    </nav>
++  </aside>
++</template>
++
++<script setup lang="ts">
++defineEmits<{ (event: 'navigate'): void }>();
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.sidebar {
++  display: flex;
++  flex-direction: column;
++  gap: $spacing-6;
++
++  &__brand {
++    font-weight: 700;
++    font-size: 1.1rem;
++  }
++
++  &__nav {
++    display: flex;
++    flex-direction: column;
++    gap: $spacing-3;
++  }
++
++  &__link {
++    padding: $spacing-2 $spacing-3;
++    border-radius: $radius-sm;
++    background: $color-gray-100;
++    font-weight: 500;
++
++    &.router-link-active {
++      background: rgba($color-primary, 0.15);
++      color: $color-primary-600;
++    }
++  }
++}
++</style>
+diff --git a/components/layout/AdminTopbar.vue b/components/layout/AdminTopbar.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..3360125bd1155151fb710fc9a59f12cd0d4bc317
+--- /dev/null
++++ b/components/layout/AdminTopbar.vue
+@@ -0,0 +1,75 @@
++<template>
++  <div class="admin__topbar">
++    <div class="topbar">
++      <button
++        v-if="showMobileToggle"
++        class="topbar__menu"
++        type="button"
++        aria-label="Otwórz menu"
++        @click="openDrawer?.()"
++      >
++        ☰
++      </button>
++      <h1 class="topbar__title">{{ title }}</h1>
++    </div>
++    <div class="topbar__actions">
++      <n-button v-if="showBack" secondary @click="navigateBack">Wróć</n-button>
++      <n-button v-if="showLogout" tertiary @click="logout">Wyloguj</n-button>
++    </div>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed, inject } from 'vue';
++import { useRoute, useRouter } from 'vue-router';
++import { NButton } from 'naive-ui';
++
++const props = defineProps<{ title: string; showBack?: boolean }>();
++const openDrawer = inject<() => void>('openAdminDrawer');
++const route = useRoute();
++const router = useRouter();
++
++const showMobileToggle = computed(() => route.path !== '/admin/login');
++const showLogout = computed(() => route.path !== '/admin/login');
++
++const navigateBack = () => {
++  router.back();
++};
++
++const logout = () => {
++  const authCookie = useCookie('admin_auth');
++  authCookie.value = null;
++  router.push('/admin/login');
++};
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.topbar {
++  display: flex;
++  align-items: center;
++  gap: $spacing-3;
++
++  &__title {
++    margin: 0;
++    font-size: 1.25rem;
++  }
++
++  &__menu {
++    border: 1px solid $color-gray-200;
++    background: $color-white;
++    padding: $spacing-2 $spacing-3;
++    border-radius: $radius-sm;
++
++    @media (min-width: $breakpoint-tablet) {
++      display: none;
++    }
++  }
++
++  &__actions {
++    display: flex;
++    gap: $spacing-2;
++  }
++}
++</style>
+diff --git a/components/layout/PublicFooter.vue b/components/layout/PublicFooter.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..f6144773eef3feb03d0e051c6ecaf07e752f65f0
+--- /dev/null
++++ b/components/layout/PublicFooter.vue
+@@ -0,0 +1,76 @@
++<template>
++  <footer class="footer">
++    <div class="footer__container">
++      <div>
++        <h3 class="footer__title">Schronisko Nadzieja</h3>
++        <p class="footer__text">{{ shelter.address }}</p>
++        <p class="footer__text">{{ shelter.openingHours }}</p>
++      </div>
++      <div>
++        <p class="footer__text">
++          Telefon: <a :href="`tel:${shelter.phone}`">{{ shelter.phone }}</a>
++        </p>
++        <p class="footer__text">
++          Email: <a :href="`mailto:${shelter.email}`">{{ shelter.email }}</a>
++        </p>
++      </div>
++      <div>
++        <NuxtLink class="footer__link" to="/animals">Zobacz zwierzęta</NuxtLink>
++        <NuxtLink class="footer__link" to="/contact">Kontakt</NuxtLink>
++      </div>
++    </div>
++  </footer>
++</template>
++
++<script setup lang="ts">
++import { computed } from 'vue';
++import { getShelterInfo, type ShelterInfo } from '~/repositories/shelter';
++
++const { data } = await useAsyncData('shelter-info', getShelterInfo);
++
++const shelter = computed<ShelterInfo>(() => ({
++  name: data.value?.name ?? 'Schronisko Nadzieja',
++  phone: data.value?.phone ?? '',
++  email: data.value?.email ?? '',
++  address: data.value?.address ?? '',
++  openingHours: data.value?.openingHours ?? '',
++  adoptionFormUrl: data.value?.adoptionFormUrl ?? '',
++  mapEmbedUrl: data.value?.mapEmbedUrl ?? ''
++}));
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.footer {
++  background: $color-white;
++  border-top: 1px solid $color-gray-200;
++  padding: $spacing-8 $spacing-4;
++
++  &__container {
++    max-width: 1200px;
++    margin: 0 auto;
++    display: grid;
++    gap: $spacing-6;
++
++    @media (min-width: $breakpoint-tablet) {
++      grid-template-columns: repeat(3, 1fr);
++    }
++  }
++
++  &__title {
++    margin: 0 0 $spacing-2;
++  }
++
++  &__text {
++    margin: 0 0 $spacing-2;
++    color: $color-gray-500;
++  }
++
++  &__link {
++    display: block;
++    margin-bottom: $spacing-2;
++    font-weight: 600;
++  }
++}
++</style>
+diff --git a/components/layout/PublicHeader.vue b/components/layout/PublicHeader.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..3902eb5c8ab14a9073d1939b62373d70d851739b
+--- /dev/null
++++ b/components/layout/PublicHeader.vue
+@@ -0,0 +1,136 @@
++<template>
++  <header class="header">
++    <div class="header__container">
++      <NuxtLink to="/" class="header__logo" aria-label="Schronisko Nadzieja">
++        <span class="header__logo-mark">🐾</span>
++        Schronisko Nadzieja
++      </NuxtLink>
++      <nav class="header__nav" aria-label="Nawigacja główna">
++        <NuxtLink class="header__link" to="/animals">Zwierzęta</NuxtLink>
++        <NuxtLink class="header__link" to="/contact">Kontakt</NuxtLink>
++        <NuxtLink class="header__link header__link--cta" to="/animals">Adoptuj</NuxtLink>
++      </nav>
++      <button class="header__burger" type="button" @click="isOpen = !isOpen" aria-label="Otwórz menu">
++        ☰
++      </button>
++    </div>
++    <transition name="fade">
++      <div v-if="isOpen" class="header__drawer">
++        <NuxtLink class="header__drawer-link" to="/animals" @click="isOpen = false">Zwierzęta</NuxtLink>
++        <NuxtLink class="header__drawer-link" to="/contact" @click="isOpen = false">Kontakt</NuxtLink>
++        <NuxtLink class="header__drawer-link header__drawer-link--cta" to="/animals" @click="isOpen = false">
++          Adoptuj
++        </NuxtLink>
++      </div>
++    </transition>
++  </header>
++</template>
++
++<script setup lang="ts">
++import { ref } from 'vue';
++
++const isOpen = ref(false);
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.header {
++  position: sticky;
++  top: 0;
++  z-index: $z-header;
++  background: $color-white;
++  border-bottom: 1px solid $color-gray-200;
++
++  &__container {
++    max-width: 1200px;
++    margin: 0 auto;
++    padding: $spacing-4;
++    display: flex;
++    align-items: center;
++    justify-content: space-between;
++    gap: $spacing-4;
++  }
++
++  &__logo {
++    font-weight: 700;
++    display: flex;
++    align-items: center;
++    gap: $spacing-2;
++  }
++
++  &__logo-mark {
++    font-size: 1.4rem;
++  }
++
++  &__nav {
++    display: none;
++    gap: $spacing-4;
++    align-items: center;
++
++    @media (min-width: $breakpoint-tablet) {
++      display: flex;
++    }
++  }
++
++  &__link {
++    color: $color-gray-700;
++    font-weight: 500;
++    transition: color $transition-base;
++
++    &:hover,
++    &:focus-visible {
++      color: $color-primary;
++    }
++
++    &--cta {
++      padding: $spacing-2 $spacing-4;
++      border-radius: $radius-md;
++      background: $color-accent;
++      color: $color-white;
++    }
++  }
++
++  &__burger {
++    border: 1px solid $color-gray-200;
++    background: $color-white;
++    padding: $spacing-2 $spacing-3;
++    border-radius: $radius-sm;
++    font-size: 1.2rem;
++
++    @media (min-width: $breakpoint-tablet) {
++      display: none;
++    }
++  }
++
++  &__drawer {
++    display: flex;
++    flex-direction: column;
++    gap: $spacing-2;
++    padding: $spacing-4;
++    background: $color-white;
++    border-top: 1px solid $color-gray-200;
++  }
++
++  &__drawer-link {
++    padding: $spacing-3;
++    border-radius: $radius-sm;
++    background: $color-gray-100;
++
++    &--cta {
++      background: $color-accent;
++      color: $color-white;
++    }
++  }
++}
++
++.fade-enter-active,
++.fade-leave-active {
++  transition: opacity $transition-base;
++}
++
++.fade-enter-from,
++.fade-leave-to {
++  opacity: 0;
++}
++</style>
+diff --git a/data/mock_data.json b/data/mock_data.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..a1d5a00c06062fd9daf7b5b5871816ca594068e5
+--- /dev/null
++++ b/data/mock_data.json
+@@ -0,0 +1,81 @@
++{
++  "shelter": {
++    "name": "Schronisko Nadzieja",
++    "phone": "+48 600 123 456",
++    "email": "kontakt@schronisko-nadzieja.pl",
++    "address": "ul. Leśna 12, 00-001 Warszawa",
++    "openingHours": "Pon-Pt 9:00–17:00, Sob 10:00–14:00",
++    "adoptionFormUrl": "https://example.org/ankieta-adopcyjna",
++    "mapEmbedUrl": "https://maps.google.com/maps?q=Warszawa&t=&z=13&ie=UTF8&iwloc=&output=embed"
++  },
++  "animals": [
++    {
++      "id": "a1",
++      "name": "Luna",
++      "type": "kot",
++      "age": "dorosły",
++      "gender": "samica",
++      "size": "mała",
++      "description": "Spokojna kotka, która uwielbia pieszczoty i towarzystwo ludzi.",
++      "intakeDate": "2024-01-18",
++      "status": "do adopcji",
++      "urgent": false,
++      "featured": true,
++      "photos": [
++        "https://placehold.co/800x600?text=Luna",
++        "https://placehold.co/800x600?text=Luna+2"
++      ]
++    },
++    {
++      "id": "a2",
++      "name": "Borys",
++      "type": "pies",
++      "age": "senior",
++      "gender": "samiec",
++      "size": "duża",
++      "description": "Wierny i łagodny pies, który szuka spokojnego domu.",
++      "intakeDate": "2023-10-03",
++      "status": "w trakcie",
++      "urgent": true,
++      "featured": true,
++      "photos": [
++        "https://placehold.co/800x600?text=Borys",
++        "https://placehold.co/800x600?text=Borys+2"
++      ]
++    },
++    {
++      "id": "a3",
++      "name": "Misia",
++      "type": "kot",
++      "age": "młody",
++      "gender": "samica",
++      "size": "mała",
++      "description": "Radosna i energiczna, uwielbia zabawy z piłeczką.",
++      "intakeDate": "2024-03-12",
++      "status": "do adopcji",
++      "urgent": false,
++      "featured": false,
++      "photos": [
++        "https://placehold.co/800x600?text=Misia",
++        "https://placehold.co/800x600?text=Misia+2"
++      ]
++    },
++    {
++      "id": "a4",
++      "name": "Riko",
++      "type": "pies",
++      "age": "dorosły",
++      "gender": "samiec",
++      "size": "średnia",
++      "description": "Aktywny pies, idealny kompan na długie spacery.",
++      "intakeDate": "2024-02-05",
++      "status": "po adopcji",
++      "urgent": false,
++      "featured": false,
++      "photos": [
++        "https://placehold.co/800x600?text=Riko",
++        "https://placehold.co/800x600?text=Riko+2"
++      ]
++    }
++  ]
++}
+diff --git a/error.vue b/error.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..18218705bde94d1815be7873e78db46d4cf9f878
+--- /dev/null
++++ b/error.vue
+@@ -0,0 +1,50 @@
++<template>
++  <div class="page__container error">
++    <h1 class="error__title">{{ title }}</h1>
++    <p class="error__text">{{ message }}</p>
++    <n-button type="primary" @click="handleError">Wróć na stronę główną</n-button>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed } from 'vue';
++import { NButton } from 'naive-ui';
++
++const error = useError();
++
++const title = computed(() => {
++  if (error.value?.statusCode === 404) return 'Nie znaleziono';
++  if (error.value?.statusCode === 401 || error.value?.statusCode === 403) return 'Brak uprawnień';
++  return 'Coś poszło nie tak';
++});
++
++const message = computed(() => {
++  if (error.value?.statusCode === 404) return 'Nie znaleziono wskazanej strony.';
++  if (error.value?.statusCode === 401 || error.value?.statusCode === 403)
++    return 'Nie masz dostępu do tego zasobu. Zaloguj się ponownie.';
++  return 'Wystąpił błąd. Spróbuj ponownie później.';
++});
++
++const handleError = () => {
++  clearError({ redirect: '/' });
++};
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.error {
++  text-align: center;
++  padding: $spacing-12 $spacing-4;
++
++  &__title {
++    font-size: 2.4rem;
++    margin-bottom: $spacing-4;
++  }
++
++  &__text {
++    color: $color-gray-500;
++    margin-bottom: $spacing-6;
++  }
++}
++</style>
+diff --git a/layouts/admin.vue b/layouts/admin.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..d569fedea5ea959cbd96a0791bd3b21c95a0963b
+--- /dev/null
++++ b/layouts/admin.vue
+@@ -0,0 +1,42 @@
++<template>
++  <div class="admin__layout">
++    <AdminSidebar v-if="!isLogin" class="admin__sidebar admin__sidebar--desktop" />
++    <div class="admin__content">
++      <AdminTopbar :title="pageTitle" :show-back="showBack" />
++      <div class="page__container">
++        <slot />
++      </div>
++    </div>
++    <n-drawer v-model:show="drawerOpen" placement="left" :width="240" :auto-focus="false">
++      <AdminSidebar class="admin__sidebar" @navigate="drawerOpen = false" />
++    </n-drawer>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed, provide, ref, watch } from 'vue';
++import { useRoute } from 'vue-router';
++import { NDrawer } from 'naive-ui';
++import AdminSidebar from '~/components/layout/AdminSidebar.vue';
++import AdminTopbar from '~/components/layout/AdminTopbar.vue';
++
++const route = useRoute();
++const drawerOpen = ref(false);
++
++const isLogin = computed(() => route.path === '/admin/login');
++const pageTitle = computed(() =>
++  route.meta.title ? String(route.meta.title) : 'Panel administracyjny'
++);
++const showBack = computed(() => route.path.includes('/admin/animals'));
++
++watch(
++  () => route.path,
++  () => {
++    drawerOpen.value = false;
++  }
++);
++
++provide('openAdminDrawer', () => {
++  drawerOpen.value = true;
++});
++</script>
+diff --git a/layouts/default.vue b/layouts/default.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..ae76592dba98b415af503dc6c1e3ecee441594df
+--- /dev/null
++++ b/layouts/default.vue
+@@ -0,0 +1,31 @@
++<template>
++  <div class="layout">
++    <PublicHeader />
++    <main class="layout__main">
++      <slot />
++    </main>
++    <PublicFooter />
++    <StickyCta />
++  </div>
++</template>
++
++<script setup lang="ts">
++import PublicHeader from '~/components/layout/PublicHeader.vue';
++import PublicFooter from '~/components/layout/PublicFooter.vue';
++import StickyCta from '~/components/common/StickyCta.vue';
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.layout {
++  display: flex;
++  flex-direction: column;
++  min-height: 100vh;
++  background: $color-gray-50;
++
++  &__main {
++    flex: 1;
++  }
++}
++</style>
+diff --git a/middleware/admin-auth.ts b/middleware/admin-auth.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..5d9839c60d3ceebcb0fe9e81dd431d47039c4419
+--- /dev/null
++++ b/middleware/admin-auth.ts
+@@ -0,0 +1,8 @@
++export default defineNuxtRouteMiddleware((to) => {
++  if (to.path === '/admin/login') return;
++
++  const authCookie = useCookie('admin_auth');
++  if (!authCookie.value) {
++    return navigateTo('/admin/login');
++  }
++});
+diff --git a/nuxt.config.ts b/nuxt.config.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..31d349b0473447ae1caa0900ef21f483ffde5fbc
+--- /dev/null
++++ b/nuxt.config.ts
+@@ -0,0 +1,25 @@
++export default defineNuxtConfig({
++  ssr: true,
++  css: ['~/assets/scss/main.scss'],
++  modules: ['@pinia/nuxt'],
++  app: {
++    head: {
++      titleTemplate: '%s · Schronisko Nadzieja',
++      meta: [
++        { name: 'description', content: 'Schronisko dla zwierząt z misją adopcji i wsparcia.' },
++        { name: 'viewport', content: 'width=device-width, initial-scale=1' }
++      ],
++      link: [
++        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
++        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
++        {
++          rel: 'stylesheet',
++          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
++        }
++      ]
++    }
++  },
++  build: {
++    transpile: ['naive-ui']
++  }
++});
+diff --git a/package.json b/package.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..b22b053a712512194ef235c01547ad30cdccb574
+--- /dev/null
++++ b/package.json
+@@ -0,0 +1,28 @@
++{
++  "name": "schron-nuxt",
++  "private": true,
++  "type": "module",
++  "scripts": {
++    "dev": "nuxt dev",
++    "build": "nuxt build",
++    "start": "nuxt start",
++    "lint": "eslint .",
++    "format": "prettier --write ."
++  },
++  "dependencies": {
++    "@pinia/nuxt": "^0.5.1",
++    "naive-ui": "^2.39.0",
++    "nuxt": "^3.12.4",
++    "pinia": "^2.1.7"
++  },
++  "devDependencies": {
++    "@types/node": "^20.11.30",
++    "eslint": "^8.57.0",
++    "eslint-config-prettier": "^9.1.0",
++    "eslint-plugin-vue": "^9.23.0",
++    "prettier": "^3.2.5",
++    "sass": "^1.77.4",
++    "sass-loader": "^14.2.1",
++    "typescript": "^5.4.5"
++  }
++}
+diff --git a/pages/admin/animals/[id]/edit.vue b/pages/admin/animals/[id]/edit.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..fafe04295c66f0e559cf40482675d4c3855b3ffc
+--- /dev/null
++++ b/pages/admin/animals/[id]/edit.vue
+@@ -0,0 +1,51 @@
++<template>
++  <div>
++    <h2 class="section__title">Edytuj zwierzę</h2>
++    <div v-if="loading">
++      <n-skeleton height="320px" />
++    </div>
++    <div v-else-if="!animal" class="state">
++      <n-empty description="Nie znaleziono zwierzęcia" />
++    </div>
++    <AnimalForm v-else :initial-value="animal" @save="handleSave" />
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed, onMounted, ref } from 'vue';
++import { NEmpty, NSkeleton } from 'naive-ui';
++import AnimalForm from '~/components/forms/AnimalForm.vue';
++import { useAnimalsStore } from '~/store/animals';
++import type { Animal } from '~/types/animal';
++
++definePageMeta({
++  layout: 'admin',
++  middleware: 'admin-auth',
++  title: 'Edytuj zwierzę'
++});
++
++const store = useAnimalsStore();
++const loading = ref(true);
++const route = useRoute();
++
++onMounted(async () => {
++  await store.init();
++  loading.value = false;
++});
++
++const animal = computed(() => store.animals.find((item) => item.id === route.params.id) || null);
++
++const handleSave = (payload: Animal) => {
++  if (!animal.value) return;
++  store.updateAnimal(animal.value.id, payload);
++  navigateTo('/admin/animals');
++};
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.state {
++  margin-top: $spacing-4;
++}
++</style>
+diff --git a/pages/admin/animals/index.vue b/pages/admin/animals/index.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..17821994a79e025ae8c8d1efca04041f9d79befc
+--- /dev/null
++++ b/pages/admin/animals/index.vue
+@@ -0,0 +1,143 @@
++<template>
++  <div>
++    <div class="admin-actions">
++      <h2 class="section__title">Zarządzanie zwierzętami</h2>
++      <n-button type="primary" @click="navigateTo('/admin/animals/new')">Dodaj zwierzę</n-button>
++    </div>
++
++    <div v-if="loading" class="admin-list">
++      <n-skeleton v-for="item in 4" :key="item" height="140px" />
++      <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
++    </div>
++    <div v-else-if="animals.length === 0" class="state">
++      <n-empty description="Brak zwierząt w bazie">
++        <template #extra>
++          <n-button type="primary" @click="navigateTo('/admin/animals/new')">Dodaj zwierzę</n-button>
++        </template>
++      </n-empty>
++    </div>
++    <div v-else class="admin-list">
++      <n-card v-for="animal in animals" :key="animal.id" class="admin-card">
++        <div class="admin-card__content">
++          <img :src="animal.photos[0]" :alt="animal.name" class="admin-card__image" />
++          <div class="admin-card__details">
++            <h3>{{ animal.name }}</h3>
++            <p class="admin-card__meta">{{ animal.type }} · {{ animal.status }}</p>
++            <n-tag v-if="animal.urgent" type="warning">Pilne</n-tag>
++          </div>
++          <div class="admin-card__actions">
++            <n-button size="small" secondary @click="toggleUrgent(animal.id)">
++              {{ animal.urgent ? 'Usuń pilne' : 'Oznacz pilne' }}
++            </n-button>
++            <n-button size="small" @click="navigateTo(`/admin/animals/${animal.id}/edit`)">Edytuj</n-button>
++            <n-button size="small" type="error" secondary @click="removeAnimal(animal.id)">Usuń</n-button>
++          </div>
++        </div>
++      </n-card>
++    </div>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed, onMounted, ref, watch } from 'vue';
++import { NButton, NCard, NEmpty, NSkeleton, NTag } from 'naive-ui';
++import { useAnimalsStore } from '~/store/animals';
++
++definePageMeta({
++  layout: 'admin',
++  middleware: 'admin-auth',
++  title: 'Zwierzęta'
++});
++
++const store = useAnimalsStore();
++const loading = ref(true);
++const showLoadingText = ref(false);
++
++onMounted(async () => {
++  await store.init();
++  loading.value = false;
++});
++
++watch(
++  loading,
++  (value) => {
++    if (value) {
++      showLoadingText.value = false;
++      setTimeout(() => {
++        if (loading.value) showLoadingText.value = true;
++      }, 800);
++    } else {
++      showLoadingText.value = false;
++    }
++  },
++  { immediate: true }
++);
++
++const animals = computed(() => store.animals);
++
++const removeAnimal = (id: string) => {
++  store.removeAnimal(id);
++};
++
++const toggleUrgent = (id: string) => {
++  store.toggleUrgent(id);
++};
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.admin-actions {
++  display: flex;
++  flex-direction: column;
++  gap: $spacing-3;
++  margin-bottom: $spacing-6;
++
++  @media (min-width: $breakpoint-tablet) {
++    flex-direction: row;
++    justify-content: space-between;
++    align-items: center;
++  }
++}
++
++.admin-list {
++  display: grid;
++  gap: $spacing-4;
++}
++
++.admin-card {
++  &__content {
++    display: flex;
++    flex-direction: column;
++    gap: $spacing-4;
++
++    @media (min-width: $breakpoint-tablet) {
++      flex-direction: row;
++      align-items: center;
++      justify-content: space-between;
++    }
++  }
++
++  &__image {
++    width: 120px;
++    height: 120px;
++    object-fit: cover;
++    border-radius: $radius-md;
++  }
++
++  &__meta {
++    margin: $spacing-1 0 $spacing-2;
++    color: $color-gray-500;
++  }
++
++  &__actions {
++    display: flex;
++    flex-wrap: wrap;
++    gap: $spacing-2;
++  }
++}
++
++.state__loading {
++  color: $color-gray-500;
++}
++</style>
+diff --git a/pages/admin/animals/new.vue b/pages/admin/animals/new.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..822a86ad8187797cfaad90a0011a03c3468d7ca7
+--- /dev/null
++++ b/pages/admin/animals/new.vue
+@@ -0,0 +1,50 @@
++<template>
++  <div>
++    <h2 class="section__title">Dodaj zwierzę</h2>
++    <div v-if="loading">
++      <n-skeleton height="320px" />
++    </div>
++    <AnimalForm v-else :initial-value="formValue" @save="handleSave" />
++  </div>
++</template>
++
++<script setup lang="ts">
++import { onMounted, ref } from 'vue';
++import { NSkeleton } from 'naive-ui';
++import AnimalForm from '~/components/forms/AnimalForm.vue';
++import type { Animal } from '~/types/animal';
++import { useAnimalsStore } from '~/store/animals';
++
++definePageMeta({
++  layout: 'admin',
++  middleware: 'admin-auth',
++  title: 'Dodaj zwierzę'
++});
++
++const store = useAnimalsStore();
++const loading = ref(true);
++const formValue = ref<Animal>({
++  id: crypto.randomUUID(),
++  name: '',
++  type: 'pies',
++  age: 'młody',
++  gender: 'samiec',
++  size: 'mała',
++  description: '',
++  intakeDate: '',
++  status: 'do adopcji',
++  urgent: false,
++  featured: false,
++  photos: []
++});
++
++onMounted(async () => {
++  await store.init();
++  loading.value = false;
++});
++
++const handleSave = (animal: Animal) => {
++  store.addAnimal(animal);
++  navigateTo('/admin/animals');
++};
++</script>
+diff --git a/pages/admin/index.vue b/pages/admin/index.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..afd0030bf03fb2db46fb227982bb42db34c0b809
+--- /dev/null
++++ b/pages/admin/index.vue
+@@ -0,0 +1,134 @@
++<template>
++  <div>
++    <h2 class="section__title">Dashboard</h2>
++    <div v-if="loading" class="dashboard">
++      <n-skeleton height="120px" />
++      <n-skeleton height="120px" />
++      <n-skeleton height="120px" />
++      <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
++    </div>
++    <div v-else class="dashboard">
++      <n-card>
++        <h3>Liczba zwierząt</h3>
++        <p class="dashboard__value">{{ animals.length }}</p>
++      </n-card>
++      <n-card>
++        <h3>Pilne przypadki</h3>
++        <p class="dashboard__value">{{ urgentCount }}</p>
++      </n-card>
++      <n-card>
++        <h3>Do adopcji</h3>
++        <p class="dashboard__value">{{ adoptionCount }}</p>
++      </n-card>
++    </div>
++
++    <section class="recent">
++      <h3 class="section__title">Ostatnio dodane zwierzęta</h3>
++      <div v-if="loading" class="recent__list">
++        <n-skeleton v-for="item in 3" :key="item" height="80px" />
++      </div>
++      <div v-else-if="recentAnimals.length === 0" class="state">
++        <n-empty description="Brak zwierząt w bazie" />
++      </div>
++      <div v-else class="recent__list">
++        <n-card v-for="animal in recentAnimals" :key="animal.id">
++          <div class="recent__item">
++            <div>
++              <strong>{{ animal.name }}</strong>
++              <p class="recent__meta">{{ animal.type }} · {{ animal.status }}</p>
++            </div>
++            <n-tag v-if="animal.urgent" type="warning">Pilne</n-tag>
++          </div>
++        </n-card>
++      </div>
++    </section>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed, onMounted, ref, watch } from 'vue';
++import { NCard, NEmpty, NSkeleton, NTag } from 'naive-ui';
++import { useAnimalsStore } from '~/store/animals';
++
++definePageMeta({
++  layout: 'admin',
++  middleware: 'admin-auth',
++  title: 'Dashboard'
++});
++
++const store = useAnimalsStore();
++const loading = ref(true);
++const showLoadingText = ref(false);
++
++onMounted(async () => {
++  await store.init();
++  loading.value = false;
++});
++
++watch(
++  loading,
++  (value) => {
++    if (value) {
++      showLoadingText.value = false;
++      setTimeout(() => {
++        if (loading.value) showLoadingText.value = true;
++      }, 800);
++    } else {
++      showLoadingText.value = false;
++    }
++  },
++  { immediate: true }
++);
++
++const animals = computed(() => store.animals);
++const urgentCount = computed(() => store.urgentAnimals.length);
++const adoptionCount = computed(() => store.animals.filter((animal) => animal.status === 'do adopcji').length);
++const recentAnimals = computed(() => store.animals.slice().reverse().slice(0, 3));
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.dashboard {
++  display: grid;
++  gap: $spacing-4;
++  margin-bottom: $spacing-8;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: repeat(3, minmax(0, 1fr));
++  }
++
++  &__value {
++    font-size: 2rem;
++    margin: $spacing-2 0 0;
++  }
++}
++
++.recent {
++  margin-top: $spacing-8;
++
++  &__list {
++    display: grid;
++    gap: $spacing-3;
++  }
++
++  &__item {
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++  }
++
++  &__meta {
++    margin: 0;
++    color: $color-gray-500;
++  }
++}
++
++.state {
++  margin-top: $spacing-4;
++
++  &__loading {
++    color: $color-gray-500;
++  }
++}
++</style>
+diff --git a/pages/admin/login.vue b/pages/admin/login.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..c5410fa64fa6616f3312e01da78aac052a2919a0
+--- /dev/null
++++ b/pages/admin/login.vue
+@@ -0,0 +1,95 @@
++<template>
++  <div class="login">
++    <n-card class="login__card" title="Logowanie administratora">
++      <p class="login__note">
++        To jest tymczasowe logowanie frontend-only. <strong>Do podmiany na prawdziwy backend.</strong>
++      </p>
++      <n-form ref="formRef" :model="form" :rules="rules" label-placement="top" @submit.prevent="handleLogin">
++        <div v-if="hasSubmitErrors" class="form__summary" role="alert">
++          Podaj poprawne dane logowania.
++        </div>
++        <n-form-item label="Email" path="email" required>
++          <n-input v-model:value="form.email" placeholder="admin@schronisko.pl" />
++        </n-form-item>
++        <n-form-item label="Hasło" path="password" required>
++          <n-input v-model:value="form.password" type="password" placeholder="••••••" />
++        </n-form-item>
++        <n-button type="primary" attr-type="submit" :loading="loading" :disabled="loading">
++          Zaloguj się
++        </n-button>
++        <p v-if="errorMessage" class="login__error" role="alert">{{ errorMessage }}</p>
++      </n-form>
++    </n-card>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { ref } from 'vue';
++import { NButton, NCard, NForm, NFormItem, NInput } from 'naive-ui';
++
++definePageMeta({
++  layout: 'admin',
++  title: 'Logowanie'
++});
++
++const formRef = ref<InstanceType<typeof NForm> | null>(null);
++const loading = ref(false);
++const errorMessage = ref('');
++const hasSubmitErrors = ref(false);
++
++const form = ref({
++  email: '',
++  password: ''
++});
++
++const rules = {
++  email: { required: true, message: 'Email jest wymagany', trigger: ['blur', 'input'] },
++  password: { required: true, message: 'Hasło jest wymagane', trigger: ['blur', 'input'] }
++};
++
++const handleLogin = async () => {
++  hasSubmitErrors.value = false;
++  errorMessage.value = '';
++  const valid = await formRef.value?.validate().then(() => true).catch(() => false);
++  if (!valid) {
++    hasSubmitErrors.value = true;
++    return;
++  }
++  loading.value = true;
++  setTimeout(() => {
++    loading.value = false;
++    if (form.value.email && form.value.password) {
++      // Placeholder frontend-only auth. Replace with real backend authentication.
++      const authCookie = useCookie('admin_auth');
++      authCookie.value = 'true';
++      navigateTo('/admin');
++    } else {
++      errorMessage.value = 'Nieprawidłowe dane logowania.';
++    }
++  }, 600);
++};
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.login {
++  display: flex;
++  justify-content: center;
++  align-items: center;
++  min-height: 60vh;
++
++  &__card {
++    width: min(420px, 100%);
++  }
++
++  &__note {
++    color: $color-gray-500;
++  }
++
++  &__error {
++    margin-top: $spacing-3;
++    color: $color-danger;
++  }
++}
++</style>
+diff --git a/pages/animals/[id].vue b/pages/animals/[id].vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..29a780dce1a88c6c17eb7f74a80a50c0be7d0fb8
+--- /dev/null
++++ b/pages/animals/[id].vue
+@@ -0,0 +1,137 @@
++<template>
++  <div class="page__container">
++    <n-button secondary @click="navigateTo('/animals')">Wróć do listy</n-button>
++    <div v-if="pending" class="detail">
++      <n-skeleton height="320px" />
++      <n-skeleton text :repeat="4" />
++    </div>
++    <div v-else-if="error" class="state">
++      <n-alert type="error" title="Błąd">Nie udało się pobrać danych.</n-alert>
++      <n-button @click="refresh">Spróbuj ponownie</n-button>
++    </div>
++    <div v-else class="detail">
++      <div class="detail__gallery">
++        <img v-for="(photo, index) in animal.photos" :key="photo" :src="photo" :alt="`${animal.name} ${index + 1}`" />
++      </div>
++      <div class="detail__info">
++        <h1 class="detail__title">{{ animal.name }}</h1>
++        <div class="detail__tags">
++          <n-tag type="success">{{ animal.status }}</n-tag>
++          <n-tag v-if="animal.urgent" type="warning">Pilne</n-tag>
++        </div>
++        <p class="detail__description">{{ animal.description }}</p>
++        <ul class="detail__list">
++          <li><strong>Wiek:</strong> {{ animal.age }}</li>
++          <li><strong>Płeć:</strong> {{ animal.gender }}</li>
++          <li><strong>Wielkość:</strong> {{ animal.size }}</li>
++          <li><strong>Data przyjęcia:</strong> {{ animal.intakeDate }}</li>
++          <li><strong>Czas w schronisku:</strong> {{ timeInShelter }}</li>
++        </ul>
++        <div class="detail__actions">
++          <n-button type="primary" :href="`tel:${shelter.phone}`" tag="a">Zadzwoń</n-button>
++          <n-button secondary :href="shelter.adoptionFormUrl" tag="a" target="_blank" rel="noopener">
++            Ankieta adopcyjna
++          </n-button>
++        </div>
++      </div>
++    </div>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed } from 'vue';
++import { NAlert, NButton, NSkeleton, NTag } from 'naive-ui';
++import { getAnimalById } from '~/repositories/animals';
++import { getShelterInfo } from '~/repositories/shelter';
++
++const route = useRoute();
++
++const { data, pending, error, refresh } = await useAsyncData(`animal-${route.params.id}`, () =>
++  getAnimalById(String(route.params.id))
++);
++
++if (!data.value && !pending.value) {
++  throw createError({ statusCode: 404, statusMessage: 'Nie znaleziono zwierzęcia' });
++}
++
++const animal = computed(() => data.value!);
++
++const { data: shelterData } = await useAsyncData('shelter-detail', getShelterInfo);
++const shelter = computed(() => ({
++  phone: shelterData.value?.phone ?? '',
++  adoptionFormUrl: shelterData.value?.adoptionFormUrl ?? '#'
++}));
++
++const timeInShelter = computed(() => {
++  const intake = new Date(animal.value.intakeDate);
++  const now = new Date();
++  const days = Math.floor((now.getTime() - intake.getTime()) / (1000 * 60 * 60 * 24));
++  return `${days} dni`;
++});
++
++useHead({
++  title: animal.value?.name ?? 'Zwierzę',
++  meta: [
++    {
++      name: 'description',
++      content: animal.value?.description ?? 'Poznaj podopiecznego schroniska.'
++    }
++  ]
++});
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.detail {
++  margin-top: $spacing-6;
++  display: grid;
++  gap: $spacing-8;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: 1.2fr 1fr;
++  }
++
++  &__gallery {
++    display: grid;
++    gap: $spacing-4;
++
++    img {
++      border-radius: $radius-lg;
++      box-shadow: $shadow-sm;
++    }
++  }
++
++  &__title {
++    margin: 0 0 $spacing-3;
++  }
++
++  &__tags {
++    display: flex;
++    gap: $spacing-2;
++    margin-bottom: $spacing-4;
++  }
++
++  &__description {
++    color: $color-gray-500;
++  }
++
++  &__list {
++    padding-left: $spacing-4;
++  }
++
++  &__actions {
++    display: flex;
++    gap: $spacing-3;
++    margin-top: $spacing-4;
++    flex-wrap: wrap;
++  }
++}
++
++.state {
++  display: flex;
++  flex-direction: column;
++  gap: $spacing-4;
++  margin-top: $spacing-6;
++}
++</style>
+diff --git a/pages/animals/index.vue b/pages/animals/index.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..1a1c0ed6daf7771c561ce8d0dd3658b848685c97
+--- /dev/null
++++ b/pages/animals/index.vue
+@@ -0,0 +1,175 @@
++<template>
++  <div class="page__container">
++    <h1 class="page__title">Zwierzęta do adopcji</h1>
++    <div class="filters">
++      <n-input v-model:value="filters.search" placeholder="Szukaj po imieniu" clearable />
++      <n-select v-model:value="filters.type" :options="typeOptions" clearable placeholder="Typ" />
++      <n-select v-model:value="filters.age" :options="ageOptions" clearable placeholder="Wiek" />
++      <n-select v-model:value="filters.gender" :options="genderOptions" clearable placeholder="Płeć" />
++      <n-select v-model:value="filters.size" :options="sizeOptions" clearable placeholder="Wielkość" />
++      <n-button secondary @click="resetFilters">Wyczyść filtry</n-button>
++    </div>
++
++    <div v-if="pending" class="card-grid">
++      <n-skeleton v-for="item in 6" :key="item" height="240px" />
++      <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
++    </div>
++    <div v-else-if="error" class="state">
++      <n-alert type="error" title="Błąd">
++        Nie udało się pobrać listy. Spróbuj ponownie.
++      </n-alert>
++      <n-button @click="refresh">Spróbuj ponownie</n-button>
++    </div>
++    <div v-else-if="filteredAnimals.length === 0" class="state">
++      <n-empty description="Brak wyników">
++        <template #extra>
++          <n-button @click="resetFilters">Wyczyść filtry</n-button>
++        </template>
++      </n-empty>
++    </div>
++    <div v-else class="card-grid">
++      <AnimalCard v-for="animal in pagedAnimals" :key="animal.id" :animal="animal" />
++    </div>
++
++    <div v-if="!pending && filteredAnimals.length > pageSize" class="pagination">
++      <n-pagination v-model:page="page" :page-size="pageSize" :item-count="filteredAnimals.length" />
++    </div>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed, reactive, ref, watch } from 'vue';
++import { NAlert, NButton, NEmpty, NInput, NPagination, NSelect, NSkeleton } from 'naive-ui';
++import AnimalCard from '~/components/cards/AnimalCard.vue';
++import { getAnimals } from '~/repositories/animals';
++
++const { data, pending, error, refresh } = await useAsyncData('animals-list', getAnimals);
++const showLoadingText = ref(false);
++
++const filters = reactive({
++  search: '',
++  type: null as string | null,
++  age: null as string | null,
++  gender: null as string | null,
++  size: null as string | null
++});
++
++const typeOptions = [
++  { label: 'Pies', value: 'pies' },
++  { label: 'Kot', value: 'kot' }
++];
++const ageOptions = [
++  { label: 'Młody', value: 'młody' },
++  { label: 'Dorosły', value: 'dorosły' },
++  { label: 'Senior', value: 'senior' }
++];
++const genderOptions = [
++  { label: 'Samiec', value: 'samiec' },
++  { label: 'Samica', value: 'samica' }
++];
++const sizeOptions = [
++  { label: 'Mała', value: 'mała' },
++  { label: 'Średnia', value: 'średnia' },
++  { label: 'Duża', value: 'duża' }
++];
++
++const page = ref(1);
++const pageSize = 6;
++
++const filteredAnimals = computed(() => {
++  const list = data.value ?? [];
++  return list.filter((animal) => {
++    const matchesSearch = animal.name.toLowerCase().includes(filters.search.toLowerCase());
++    const matchesType = filters.type ? animal.type === filters.type : true;
++    const matchesAge = filters.age ? animal.age === filters.age : true;
++    const matchesGender = filters.gender ? animal.gender === filters.gender : true;
++    const matchesSize = filters.size ? animal.size === filters.size : true;
++    return matchesSearch && matchesType && matchesAge && matchesGender && matchesSize;
++  });
++});
++
++const pagedAnimals = computed(() => {
++  const start = (page.value - 1) * pageSize;
++  return filteredAnimals.value.slice(start, start + pageSize);
++});
++
++const resetFilters = () => {
++  filters.search = '';
++  filters.type = null;
++  filters.age = null;
++  filters.gender = null;
++  filters.size = null;
++};
++
++watch(
++  () => ({ ...filters }),
++  () => {
++    page.value = 1;
++  }
++);
++
++watch(
++  pending,
++  (value) => {
++    if (value) {
++      showLoadingText.value = false;
++      setTimeout(() => {
++        if (pending.value) showLoadingText.value = true;
++      }, 800);
++    } else {
++      showLoadingText.value = false;
++    }
++  },
++  { immediate: true }
++);
++
++useHead({
++  title: 'Lista zwierząt',
++  meta: [
++    {
++      name: 'description',
++      content: 'Poznaj zwierzęta czekające na adopcję i znajdź nowego przyjaciela.'
++    }
++  ]
++});
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.filters {
++  display: grid;
++  gap: $spacing-3;
++  margin-bottom: $spacing-6;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: repeat(3, minmax(0, 1fr));
++  }
++}
++
++.card-grid {
++  display: grid;
++  gap: $spacing-6;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: repeat(3, minmax(0, 1fr));
++  }
++}
++
++.pagination {
++  margin-top: $spacing-6;
++  display: flex;
++  justify-content: center;
++}
++
++.state {
++  display: flex;
++  flex-direction: column;
++  gap: $spacing-4;
++  align-items: flex-start;
++
++  &__loading {
++    color: $color-gray-500;
++  }
++}
++</style>
+diff --git a/pages/contact.vue b/pages/contact.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..b4fe7cddbc1a864058ff80de2e50eda17beb5e57
+--- /dev/null
++++ b/pages/contact.vue
+@@ -0,0 +1,74 @@
++<template>
++  <div class="page__container contact">
++    <div>
++      <h1 class="page__title">Kontakt</h1>
++      <div class="contact__details">
++        <p><strong>Telefon:</strong> <a :href="`tel:${shelter.phone}`">{{ shelter.phone }}</a></p>
++        <p><strong>Email:</strong> <a :href="`mailto:${shelter.email}`">{{ shelter.email }}</a></p>
++        <p><strong>Adres:</strong> {{ shelter.address }}</p>
++        <p><strong>Godziny otwarcia:</strong> {{ shelter.openingHours }}</p>
++      </div>
++      <ContactForm />
++    </div>
++    <div class="contact__map">
++      <iframe
++        :src="shelter.mapEmbedUrl"
++        loading="lazy"
++        title="Mapa schroniska"
++        aria-label="Mapa schroniska"
++      ></iframe>
++    </div>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed } from 'vue';
++import ContactForm from '~/components/forms/ContactForm.vue';
++import { getShelterInfo } from '~/repositories/shelter';
++
++const { data } = await useAsyncData('shelter-contact', getShelterInfo);
++
++const shelter = computed(() => ({
++  phone: data.value?.phone ?? '',
++  email: data.value?.email ?? '',
++  address: data.value?.address ?? '',
++  openingHours: data.value?.openingHours ?? '',
++  mapEmbedUrl: data.value?.mapEmbedUrl ?? ''
++}));
++
++useHead({
++  title: 'Kontakt',
++  meta: [
++    {
++      name: 'description',
++      content: 'Skontaktuj się z nami telefonicznie lub przez formularz kontaktowy.'
++    }
++  ]
++});
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.contact {
++  display: grid;
++  gap: $spacing-8;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: 1.1fr 0.9fr;
++  }
++
++  &__details {
++    margin-bottom: $spacing-6;
++    color: $color-gray-500;
++  }
++
++  &__map iframe {
++    width: 100%;
++    height: 420px;
++    border: 0;
++    border-radius: $radius-lg;
++    box-shadow: $shadow-sm;
++  }
++}
++</style>
+diff --git a/pages/index.vue b/pages/index.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa840ea39369d9c4cc20e30d255f7bb5bd36c263
+--- /dev/null
++++ b/pages/index.vue
+@@ -0,0 +1,184 @@
++<template>
++  <div>
++    <section class="hero">
++      <div class="hero__content">
++        <p class="hero__eyebrow">Razem pomagamy zwierzętom</p>
++        <h1 class="hero__title">Znajdź nowego przyjaciela w Schronisku Nadzieja</h1>
++        <p class="hero__text">
++          Zapewniamy bezpieczny dom tymczasowy, opiekę i wsparcie adopcyjne. Pomóż nam zmieniać
++          historie zwierząt.
++        </p>
++        <div class="hero__actions">
++          <n-button type="primary" size="large" @click="navigateTo('/animals')">Adoptuj</n-button>
++          <n-button size="large" secondary @click="navigateTo('/animals')">Zobacz zwierzęta</n-button>
++          <n-button size="large" tertiary @click="navigateTo('/contact')">Kontakt</n-button>
++        </div>
++      </div>
++      <div class="hero__image">
++        <img src="https://placehold.co/600x480?text=Schronisko" alt="Adopcja zwierząt" />
++      </div>
++    </section>
++
++    <section class="page__container">
++      <div class="section__header">
++        <h2 class="section__title">Wyróżnione zwierzęta</h2>
++        <p class="section__subtitle">Poznaj podopiecznych, którzy pilnie szukają domu.</p>
++      </div>
++      <div v-if="pending" class="card-grid">
++        <n-skeleton v-for="item in 3" :key="item" height="260px" />
++        <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
++      </div>
++      <div v-else-if="error" class="state">
++        <n-alert type="error" title="Błąd">
++          Nie udało się pobrać zwierząt. Spróbuj ponownie.
++        </n-alert>
++        <n-button @click="refresh">Spróbuj ponownie</n-button>
++      </div>
++      <div v-else-if="featuredAnimals.length === 0" class="state">
++        <n-empty description="Brak wyróżnionych zwierząt" />
++      </div>
++      <div v-else class="card-grid">
++        <AnimalCard v-for="animal in featuredAnimals" :key="animal.id" :animal="animal" />
++      </div>
++    </section>
++
++    <section class="info">
++      <div class="info__content">
++        <h2 class="section__title">Dlaczego warto adoptować?</h2>
++        <p class="section__subtitle">
++          Adoptując, dajesz szansę na nowe życie i wspierasz lokalne działania NGO.
++        </p>
++        <ul class="info__list">
++          <li>Pełne wsparcie behawioralne i adopcyjne.</li>
++          <li>Zweryfikowane zdrowie i opieka weterynaryjna.</li>
++          <li>Możliwość kontaktu z opiekunem po adopcji.</li>
++        </ul>
++      </div>
++      <div class="info__cta">
++        <n-card>
++          <h3>Masz pytania?</h3>
++          <p>Zadzwoń do nas lub wypełnij formularz kontaktowy.</p>
++          <n-button type="primary" @click="navigateTo('/contact')">Kontakt</n-button>
++        </n-card>
++      </div>
++    </section>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { computed, ref, watch } from 'vue';
++import { NAlert, NButton, NCard, NEmpty, NSkeleton } from 'naive-ui';
++import AnimalCard from '~/components/cards/AnimalCard.vue';
++import { getAnimals } from '~/repositories/animals';
++
++const { data, pending, error, refresh } = await useAsyncData('home-animals', getAnimals);
++const showLoadingText = ref(false);
++
++watch(
++  pending,
++  (value) => {
++    if (value) {
++      showLoadingText.value = false;
++      setTimeout(() => {
++        if (pending.value) showLoadingText.value = true;
++      }, 800);
++    } else {
++      showLoadingText.value = false;
++    }
++  },
++  { immediate: true }
++);
++
++const featuredAnimals = computed(() => (data.value ?? []).filter((animal) => animal.featured).slice(0, 3));
++
++useHead({
++  title: 'Strona główna',
++  meta: [
++    {
++      name: 'description',
++      content: 'Schronisko dla zwierząt z misją adopcji i wsparcia. Poznaj naszych podopiecznych.'
++    }
++  ]
++});
++</script>
++
++<style scoped lang="scss">
++@use '~/assets/scss/variables' as *;
++
++.hero {
++  display: grid;
++  gap: $spacing-8;
++  padding: $spacing-10 $spacing-4;
++  max-width: 1200px;
++  margin: 0 auto;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++    align-items: center;
++  }
++
++  &__eyebrow {
++    text-transform: uppercase;
++    letter-spacing: 1px;
++    color: $color-primary;
++    font-weight: 600;
++  }
++
++  &__title {
++    font-size: 2.5rem;
++    margin: 0 0 $spacing-4;
++  }
++
++  &__text {
++    color: $color-gray-500;
++    margin-bottom: $spacing-6;
++  }
++
++  &__actions {
++    display: flex;
++    flex-wrap: wrap;
++    gap: $spacing-3;
++  }
++
++  &__image img {
++    border-radius: $radius-lg;
++    box-shadow: $shadow-md;
++  }
++}
++
++.card-grid {
++  display: grid;
++  gap: $spacing-6;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: repeat(3, minmax(0, 1fr));
++  }
++}
++
++.info {
++  display: grid;
++  gap: $spacing-8;
++  max-width: 1200px;
++  margin: 0 auto $spacing-12;
++  padding: 0 $spacing-4;
++
++  @media (min-width: $breakpoint-tablet) {
++    grid-template-columns: 2fr 1fr;
++  }
++
++  &__list {
++    padding-left: $spacing-4;
++  }
++}
++
++.state {
++  display: flex;
++  flex-direction: column;
++  gap: $spacing-4;
++  align-items: flex-start;
++
++  &__loading {
++    color: $color-gray-500;
++  }
++}
++</style>
+diff --git a/repositories/animals.ts b/repositories/animals.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4f1bd2b3317b4f4c4c7437b55804eda52a447811
+--- /dev/null
++++ b/repositories/animals.ts
+@@ -0,0 +1,11 @@
++import type { Animal } from '~/types/animal';
++
++export const getAnimals = async (): Promise<Animal[]> => {
++  const data = await import('~/data/mock_data.json');
++  return data.default.animals as Animal[];
++};
++
++export const getAnimalById = async (id: string): Promise<Animal | undefined> => {
++  const animals = await getAnimals();
++  return animals.find((animal) => animal.id === id);
++};
+diff --git a/repositories/shelter.ts b/repositories/shelter.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4afefaf7e21fa57aa3f7f73af33c132aca3d9f63
+--- /dev/null
++++ b/repositories/shelter.ts
+@@ -0,0 +1,14 @@
++export interface ShelterInfo {
++  name: string;
++  phone: string;
++  email: string;
++  address: string;
++  openingHours: string;
++  adoptionFormUrl: string;
++  mapEmbedUrl: string;
++}
++
++export const getShelterInfo = async (): Promise<ShelterInfo> => {
++  const data = await import('~/data/mock_data.json');
++  return data.default.shelter as ShelterInfo;
++};
+diff --git a/store/animals.ts b/store/animals.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..dbbc81b836810fbc5baca1f9a1e508b2517883de
+--- /dev/null
++++ b/store/animals.ts
+@@ -0,0 +1,58 @@
++import { defineStore } from 'pinia';
++import type { Animal } from '~/types/animal';
++import { getAnimals } from '~/repositories/animals';
++
++const STORAGE_KEY = 'schron_animals';
++
++export const useAnimalsStore = defineStore('animals', {
++  state: () => ({
++    animals: [] as Animal[],
++    initialized: false
++  }),
++  getters: {
++    urgentAnimals(state) {
++      return state.animals.filter((animal) => animal.urgent);
++    },
++    featuredAnimals(state) {
++      return state.animals.filter((animal) => animal.featured);
++    }
++  },
++  actions: {
++    async init() {
++      if (this.initialized) return;
++
++      const fallback = await getAnimals();
++
++      if (process.client) {
++        const stored = localStorage.getItem(STORAGE_KEY);
++        this.animals = stored ? (JSON.parse(stored) as Animal[]) : fallback;
++      } else {
++        this.animals = fallback;
++      }
++
++      this.initialized = true;
++    },
++    persist() {
++      if (!process.client) return;
++      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.animals));
++    },
++    addAnimal(payload: Animal) {
++      this.animals = [...this.animals, payload];
++      this.persist();
++    },
++    updateAnimal(id: string, payload: Animal) {
++      this.animals = this.animals.map((animal) => (animal.id === id ? payload : animal));
++      this.persist();
++    },
++    removeAnimal(id: string) {
++      this.animals = this.animals.filter((animal) => animal.id !== id);
++      this.persist();
++    },
++    toggleUrgent(id: string) {
++      this.animals = this.animals.map((animal) =>
++        animal.id === id ? { ...animal, urgent: !animal.urgent } : animal
++      );
++      this.persist();
++    }
++  }
++});
+diff --git a/tsconfig.json b/tsconfig.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..4b34df1571f7bfb636c02bbb718603cc2d9d1382
+--- /dev/null
++++ b/tsconfig.json
+@@ -0,0 +1,3 @@
++{
++  "extends": "./.nuxt/tsconfig.json"
++}
+diff --git a/types/animal.ts b/types/animal.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..a78bba708afd73d64a7251672db70d1557f26041
+--- /dev/null
++++ b/types/animal.ts
+@@ -0,0 +1,16 @@
++export type AdoptionStatus = 'do adopcji' | 'w trakcie' | 'po adopcji';
++
++export interface Animal {
++  id: string;
++  name: string;
++  type: 'pies' | 'kot';
++  age: 'młody' | 'dorosły' | 'senior';
++  gender: 'samiec' | 'samica';
++  size: 'mała' | 'średnia' | 'duża';
++  description: string;
++  intakeDate: string;
++  status: AdoptionStatus;
++  urgent: boolean;
++  featured: boolean;
++  photos: string[];
++}
+ 
+EOF
+)
