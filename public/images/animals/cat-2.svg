@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#fef9c3" />
+  <rect x="200" y="160" width="400" height="280" rx="140" fill="#f97316" opacity="0.2" />
+  <text x="400" y="320" font-family="Arial" font-size="48" text-anchor="middle" fill="#78350f">Kot</text>
+</svg>

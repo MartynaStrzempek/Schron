@@ -1,0 +1,69 @@
+{
+  "shelter": {
+    "name": "Schronisko Przyjaciele Zwierząt",
+    "phone": "+48 555 123 456",
+    "email": "kontakt@schronisko.pl",
+    "address": "ul. Łąkowa 12, 00-123 Warszawa",
+    "openHours": "Pn–Pt 10:00–18:00, Sb–Nd 10:00–16:00",
+    "mapEmbedUrl": "https://maps.google.com/maps?q=Warszawa%20ul.%20%C5%81%C4%85kowa%2012&t=&z=13&ie=UTF8&iwloc=&output=embed",
+    "adoptionFormUrl": "https://forms.example.com/ankieta-adopcyjna"
+  },
+  "animals": [
+    {
+      "id": "a1",
+      "name": "Luna",
+      "type": "kot",
+      "age": "2 lata",
+      "gender": "samica",
+      "size": "mały",
+      "intakeDate": "2023-10-12",
+      "status": "do adopcji",
+      "urgent": true,
+      "description": "Cicha i ciekawska kotka, uwielbia zabawę wędką i spokojne drzemki.",
+      "images": ["/images/animals/cat-1.svg", "/images/animals/cat-2.svg"]
+    },
+    {
+      "id": "a2",
+      "name": "Bruno",
+      "type": "pies",
+      "age": "4 lata",
+      "gender": "samiec",
+      "size": "duży",
+      "intakeDate": "2022-08-03",
+      "status": "w trakcie",
+      "urgent": false,
+      "description": "Energiczny pies, który kocha długie spacery i wodę.",
+      "images": ["/images/animals/dog-1.svg", "/images/animals/dog-2.svg"]
+    },
+    {
+      "id": "a3",
+      "name": "Mimi",
+      "type": "kot",
+      "age": "1 rok",
+      "gender": "samica",
+      "size": "mały",
+      "intakeDate": "2024-01-18",
+      "status": "do adopcji",
+      "urgent": false,
+      "description": "Towarzyska i łagodna, dobrze odnajduje się z innymi zwierzętami.",
+      "images": ["/images/animals/cat-3.svg"]
+    },
+    {
+      "id": "a4",
+      "name": "Reks",
+      "type": "pies",
+      "age": "7 lat",
+      "gender": "samiec",
+      "size": "średni",
+      "intakeDate": "2021-11-05",
+      "status": "po adopcji",
+      "urgent": false,
+      "description": "Spokojny senior, uwielbia człowieka i krótkie przechadzki.",
+      "images": ["/images/animals/dog-3.svg"]
+    }
+  ],
+  "featuredAnimalIds": ["a1", "a2", "a3"],
+  "dashboard": {
+    "urgentCount": 1
+  }
+}

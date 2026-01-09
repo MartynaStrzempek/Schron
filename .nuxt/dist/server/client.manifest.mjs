@@ -1,0 +1,1 @@
+export { default } from "file:///home/martyna-nowak/Pulpit/Schron/node_modules/@nuxt/vite-builder/dist/runtime/client.manifest.mjs"
