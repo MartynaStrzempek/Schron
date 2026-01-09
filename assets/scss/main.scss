@@ -94,6 +94,18 @@ img {
   }
 }
 
+/* Naive UI button lift transition (desktop only) */
+.n-button {
+  @media (min-width: $breakpoint-tablet) {
+    transition: transform $transition-base, box-shadow $transition-base;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(17, 24, 39, 0.12);
+    }
+  }
+}
+
 .sticky-cta {
   position: sticky;
   bottom: $spacing-4;

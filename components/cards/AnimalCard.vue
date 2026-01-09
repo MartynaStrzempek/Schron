@@ -34,6 +34,12 @@ defineProps<{ animal: Animal }>();
 .animal-card {
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(17, 24, 39, 0.12);
+  }
 
   &__image {
     width: 100%;

@@ -88,6 +88,15 @@ const isOpen = ref(false);
       border-radius: $radius-md;
       background: $color-accent;
       color: $color-white;
+
+      @media (min-width: $breakpoint-tablet) {
+        transition: transform $transition-base, box-shadow $transition-base;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 10px 28px rgba(17, 24, 39, 0.15);
+        }
+      }
     }
   }
 
