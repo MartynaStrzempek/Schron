@@ -66,6 +66,19 @@ img {
   &__title {
     font-size: 1.75rem;
     margin: 0;
+    position: relative;
+    padding-bottom: $spacing-2;
+
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 4px;
+      width: 64px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, $color-accent 0%, $color-primary 100%);
+    }
   }
 
   &__subtitle {
