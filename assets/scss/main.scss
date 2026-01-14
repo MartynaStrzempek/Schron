@@ -42,16 +42,16 @@ img {
   &__container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: $spacing-8 $spacing-4;
+    padding: $spacing-32 $spacing-16;
 
     @media (min-width: $breakpoint-tablet) {
-      padding: $spacing-10 $spacing-6;
+      padding: $spacing-40 $spacing-24;
     }
   }
 
   &__title {
     font-size: 2rem;
-    margin-bottom: $spacing-6;
+    margin-bottom: $spacing-24;
   }
 }
 
@@ -59,15 +59,15 @@ img {
   &__header {
     display: flex;
     flex-direction: column;
-    gap: $spacing-2;
-    margin-bottom: $spacing-6;
+    gap: $spacing-8;
+    margin-bottom: $spacing-24;
   }
 
   &__title {
     font-size: 1.75rem;
     margin: 0;
     position: relative;
-    padding-bottom: $spacing-2;
+    padding-bottom: $spacing-8;
 
     &:after {
       content: '';
@@ -101,11 +101,11 @@ img {
 
 .sticky-cta {
   position: sticky;
-  bottom: $spacing-4;
+  bottom: $spacing-16;
   z-index: $z-sticky;
   display: flex;
-  gap: $spacing-3;
-  padding: $spacing-3;
+  gap: $spacing-12;
+  padding: $spacing-12;
   background: $color-white;
   border-radius: $radius-lg;
   box-shadow: $shadow-md;
@@ -120,9 +120,9 @@ img {
     background: rgba($color-danger, 0.1);
     border: 1px solid rgba($color-danger, 0.2);
     color: $color-danger;
-    padding: $spacing-3;
+    padding: $spacing-12;
     border-radius: $radius-sm;
-    margin-bottom: $spacing-4;
+    margin-bottom: $spacing-16;
   }
 }
 
@@ -140,7 +140,7 @@ img {
   &__sidebar {
     background: $color-white;
     border-right: 1px solid $color-gray-200;
-    padding: $spacing-6 $spacing-4;
+    padding: $spacing-24 $spacing-16;
     height: 100%;
   }
 
@@ -158,7 +158,7 @@ img {
   }
 
   &__topbar {
-    padding: $spacing-4 $spacing-6;
+    padding: $spacing-16 $spacing-24;
     background: $color-white;
     border-bottom: 1px solid $color-gray-200;
     display: flex;

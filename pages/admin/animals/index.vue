@@ -90,8 +90,8 @@ const toggleUrgent = (id: string) => {
 .admin-actions {
   display: flex;
   flex-direction: column;
-  gap: $spacing-3;
-  margin-bottom: $spacing-6;
+  gap: $spacing-12;
+  margin-bottom: $spacing-24;
 
   @media (min-width: $breakpoint-tablet) {
     flex-direction: row;
@@ -102,14 +102,14 @@ const toggleUrgent = (id: string) => {
 
 .admin-list {
   display: grid;
-  gap: $spacing-4;
+  gap: $spacing-16;
 }
 
 .admin-card {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: $spacing-4;
+    gap: $spacing-16;
 
     @media (min-width: $breakpoint-tablet) {
       flex-direction: row;
@@ -126,14 +126,14 @@ const toggleUrgent = (id: string) => {
   }
 
   &__meta {
-    margin: $spacing-1 0 $spacing-2;
+    margin: $spacing-4 0 $spacing-8;
     color: $color-gray-500;
   }
 
   &__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-2;
+    gap: $spacing-8;
   }
 }
 

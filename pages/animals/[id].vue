@@ -84,9 +84,9 @@ useHead({
 @use '~/assets/scss/variables' as *;
 
 .detail {
-  margin-top: $spacing-6;
+  margin-top: $spacing-24;
   display: grid;
-  gap: $spacing-8;
+  gap: $spacing-32;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: 1.2fr 1fr;
@@ -94,7 +94,7 @@ useHead({
 
   &__gallery {
     display: grid;
-    gap: $spacing-4;
+    gap: $spacing-16;
 
     img {
       border-radius: $radius-lg;
@@ -103,13 +103,13 @@ useHead({
   }
 
   &__title {
-    margin: 0 0 $spacing-3;
+    margin: 0 0 $spacing-12;
   }
 
   &__tags {
     display: flex;
-    gap: $spacing-2;
-    margin-bottom: $spacing-4;
+    gap: $spacing-8;
+    margin-bottom: $spacing-16;
   }
 
   &__description {
@@ -117,13 +117,13 @@ useHead({
   }
 
   &__list {
-    padding-left: $spacing-4;
+    padding-left: $spacing-16;
   }
 
   &__actions {
     display: flex;
-    gap: $spacing-3;
-    margin-top: $spacing-4;
+    gap: $spacing-12;
+    margin-top: $spacing-16;
     flex-wrap: wrap;
   }
 }
@@ -131,7 +131,7 @@ useHead({
 .state {
   display: flex;
   flex-direction: column;
-  gap: $spacing-4;
-  margin-top: $spacing-6;
+  gap: $spacing-16;
+  margin-top: $spacing-24;
 }
 </style>

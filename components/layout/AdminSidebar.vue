@@ -19,7 +19,7 @@ defineEmits<{ (event: 'navigate'): void }>();
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: $spacing-6;
+  gap: $spacing-24;
 
   &__brand {
     font-weight: 700;
@@ -29,11 +29,11 @@ defineEmits<{ (event: 'navigate'): void }>();
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: $spacing-3;
+    gap: $spacing-12;
   }
 
   &__link {
-    padding: $spacing-2 $spacing-3;
+    padding: $spacing-8 $spacing-12;
     border-radius: $radius-sm;
     background: $color-gray-100;
     font-weight: 500;

@@ -45,18 +45,18 @@ const isOpen = ref(false);
   &__container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: $spacing-4;
+    padding: $spacing-16;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: $spacing-4;
+    gap: $spacing-16;
   }
 
   &__logo {
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: $spacing-2;
+    gap: $spacing-8;
   }
 
   &__logo-mark {
@@ -65,7 +65,7 @@ const isOpen = ref(false);
 
   &__nav {
     display: none;
-    gap: $spacing-4;
+    gap: $spacing-16;
     align-items: center;
 
     @media (min-width: $breakpoint-tablet) {
@@ -84,7 +84,7 @@ const isOpen = ref(false);
     }
 
     &--cta {
-      padding: $spacing-2 $spacing-4;
+      padding: $spacing-8 $spacing-16;
       border-radius: $radius-md;
       background: $color-accent;
       color: $color-white;
@@ -103,7 +103,7 @@ const isOpen = ref(false);
   &__burger {
     border: 1px solid $color-gray-200;
     background: $color-white;
-    padding: $spacing-2 $spacing-3;
+    padding: $spacing-8 $spacing-12;
     border-radius: $radius-sm;
     font-size: 1.2rem;
 
@@ -115,14 +115,14 @@ const isOpen = ref(false);
   &__drawer {
     display: flex;
     flex-direction: column;
-    gap: $spacing-2;
-    padding: $spacing-4;
+    gap: $spacing-8;
+    padding: $spacing-16;
     background: $color-white;
     border-top: 1px solid $color-gray-200;
   }
 
   &__drawer-link {
-    padding: $spacing-3;
+    padding: $spacing-12;
     border-radius: $radius-sm;
     background: $color-gray-100;
 

@@ -139,8 +139,8 @@ useHead({
 
 .filters {
   display: grid;
-  gap: $spacing-3;
-  margin-bottom: $spacing-6;
+  gap: $spacing-12;
+  margin-bottom: $spacing-24;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -149,7 +149,7 @@ useHead({
 
 .card-grid {
   display: grid;
-  gap: $spacing-6;
+  gap: $spacing-24;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -157,7 +157,7 @@ useHead({
 }
 
 .pagination {
-  margin-top: $spacing-6;
+  margin-top: $spacing-24;
   display: flex;
   justify-content: center;
 }
@@ -165,7 +165,7 @@ useHead({
 .state {
   display: flex;
   flex-direction: column;
-  gap: $spacing-4;
+  gap: $spacing-16;
   align-items: flex-start;
 
   &__loading {

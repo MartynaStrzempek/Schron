@@ -49,7 +49,7 @@ const logout = () => {
 .topbar {
   display: flex;
   align-items: center;
-  gap: $spacing-3;
+  gap: $spacing-12;
 
   &__title {
     margin: 0;
@@ -59,7 +59,7 @@ const logout = () => {
   &__menu {
     border: 1px solid $color-gray-200;
     background: $color-white;
-    padding: $spacing-2 $spacing-3;
+    padding: $spacing-8 $spacing-12;
     border-radius: $radius-sm;
 
     @media (min-width: $breakpoint-tablet) {
@@ -69,7 +69,7 @@ const logout = () => {
 
   &__actions {
     display: flex;
-    gap: $spacing-2;
+    gap: $spacing-8;
   }
 }
 </style>

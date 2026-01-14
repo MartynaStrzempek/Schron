@@ -52,14 +52,14 @@ useHead({
 
 .contact {
   display: grid;
-  gap: $spacing-8;
+  gap: $spacing-32;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: 1.1fr 0.9fr;
   }
 
   &__details {
-    margin-bottom: $spacing-6;
+    margin-bottom: $spacing-24;
     color: $color-gray-500;
   }
 

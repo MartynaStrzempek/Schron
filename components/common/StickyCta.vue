@@ -27,7 +27,7 @@ const shelter = computed(() => ({
   &__button {
     flex: 1;
     text-align: center;
-    padding: $spacing-3;
+    padding: $spacing-12;
     border-radius: $radius-md;
     background: $color-primary;
     color: $color-white;

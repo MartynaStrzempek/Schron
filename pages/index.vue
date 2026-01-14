@@ -107,8 +107,8 @@ useHead({
 
 .hero {
   display: grid;
-  gap: $spacing-8;
-  padding: $spacing-10 $spacing-4;
+  gap: $spacing-32;
+  padding: $spacing-40 $spacing-16;
   max-width: 1200px;
   margin: 0 auto;
 
@@ -126,18 +126,18 @@ useHead({
 
   &__title {
     font-size: 2.5rem;
-    margin: 0 0 $spacing-4;
+    margin: 0 0 $spacing-16;
   }
 
   &__text {
     color: $color-gray-500;
-    margin-bottom: $spacing-6;
+    margin-bottom: $spacing-24;
   }
 
   &__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-3;
+    gap: $spacing-12;
   }
 
   &__image img {
@@ -148,7 +148,7 @@ useHead({
 
 .card-grid {
   display: grid;
-  gap: $spacing-6;
+  gap: $spacing-24;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -157,24 +157,24 @@ useHead({
 
 .info {
   display: grid;
-  gap: $spacing-8;
+  gap: $spacing-32;
   max-width: 1200px;
-  margin: 0 auto $spacing-12;
-  padding: 0 $spacing-4;
+  margin: 0 auto $spacing-48;
+  padding: 0 $spacing-16;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: 2fr 1fr;
   }
 
   &__list {
-    padding-left: $spacing-4;
+    padding-left: $spacing-16;
   }
 }
 
 .state {
   display: flex;
   flex-direction: column;
-  gap: $spacing-4;
+  gap: $spacing-16;
   align-items: flex-start;
 
   &__loading {

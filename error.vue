@@ -35,16 +35,16 @@ const handleError = () => {
 
 .error {
   text-align: center;
-  padding: $spacing-12 $spacing-4;
+  padding: $spacing-48 $spacing-16;
 
   &__title {
     font-size: 2.4rem;
-    margin-bottom: $spacing-4;
+    margin-bottom: $spacing-16;
   }
 
   &__text {
     color: $color-gray-500;
-    margin-bottom: $spacing-6;
+    margin-bottom: $spacing-24;
   }
 }
 </style>

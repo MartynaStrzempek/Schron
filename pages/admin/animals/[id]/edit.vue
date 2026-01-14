@@ -46,6 +46,6 @@ const handleSave = (payload: Animal) => {
 @use '~/assets/scss/variables' as *;
 
 .state {
-  margin-top: $spacing-4;
+  margin-top: $spacing-16;
 }
 </style>

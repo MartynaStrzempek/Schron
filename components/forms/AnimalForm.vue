@@ -134,13 +134,13 @@ const handleSubmit = async () => {
 
 .animal-form {
   background: $color-white;
-  padding: $spacing-6;
+  padding: $spacing-24;
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
 
   &__grid {
     display: grid;
-    gap: $spacing-4;
+    gap: $spacing-16;
 
     @media (min-width: $breakpoint-tablet) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -148,7 +148,7 @@ const handleSubmit = async () => {
   }
 
   &__actions {
-    margin-top: $spacing-4;
+    margin-top: $spacing-16;
   }
 }
 </style>

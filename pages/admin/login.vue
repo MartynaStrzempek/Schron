@@ -88,7 +88,7 @@ const handleLogin = async () => {
   }
 
   &__error {
-    margin-top: $spacing-3;
+    margin-top: $spacing-12;
     color: $color-danger;
   }
 }

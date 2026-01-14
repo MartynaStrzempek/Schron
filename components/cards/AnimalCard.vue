@@ -49,18 +49,18 @@ defineProps<{ animal: Animal }>();
 
   &__meta {
     display: flex;
-    gap: $spacing-2;
-    margin-bottom: $spacing-2;
+    gap: $spacing-8;
+    margin-bottom: $spacing-8;
   }
 
   &__description {
-    margin: 0 0 $spacing-2;
+    margin: 0 0 $spacing-8;
     color: $color-gray-500;
   }
 
   &__details {
     display: flex;
-    gap: $spacing-2;
+    gap: $spacing-8;
     color: $color-gray-700;
     font-size: 0.9rem;
   }

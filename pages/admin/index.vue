@@ -91,8 +91,8 @@ const recentAnimals = computed(() => store.animals.slice().reverse().slice(0, 3)
 
 .dashboard {
   display: grid;
-  gap: $spacing-4;
-  margin-bottom: $spacing-8;
+  gap: $spacing-16;
+  margin-bottom: $spacing-32;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -100,16 +100,16 @@ const recentAnimals = computed(() => store.animals.slice().reverse().slice(0, 3)
 
   &__value {
     font-size: 2rem;
-    margin: $spacing-2 0 0;
+    margin: $spacing-8 0 0;
   }
 }
 
 .recent {
-  margin-top: $spacing-8;
+  margin-top: $spacing-32;
 
   &__list {
     display: grid;
-    gap: $spacing-3;
+    gap: $spacing-12;
   }
 
   &__item {
@@ -125,7 +125,7 @@ const recentAnimals = computed(() => store.animals.slice().reverse().slice(0, 3)
 }
 
 .state {
-  margin-top: $spacing-4;
+  margin-top: $spacing-16;
 
   &__loading {
     color: $color-gray-500;

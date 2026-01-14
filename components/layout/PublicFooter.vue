@@ -45,13 +45,13 @@ const shelter = computed<ShelterInfo>(() => ({
 .footer {
   background: $color-white;
   border-top: 1px solid $color-gray-200;
-  padding: $spacing-8 $spacing-4;
+  padding: $spacing-32 $spacing-16;
 
   &__container {
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
-    gap: $spacing-6;
+    gap: $spacing-24;
 
     @media (min-width: $breakpoint-tablet) {
       grid-template-columns: repeat(3, 1fr);
@@ -59,17 +59,17 @@ const shelter = computed<ShelterInfo>(() => ({
   }
 
   &__title {
-    margin: 0 0 $spacing-2;
+    margin: 0 0 $spacing-8;
   }
 
   &__text {
-    margin: 0 0 $spacing-2;
+    margin: 0 0 $spacing-8;
     color: $color-gray-500;
   }
 
   &__link {
     display: block;
-    margin-bottom: $spacing-2;
+    margin-bottom: $spacing-8;
     font-weight: 600;
   }
 }

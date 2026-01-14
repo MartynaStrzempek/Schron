@@ -81,12 +81,12 @@ const handleSubmit = async () => {
 
 .contact-form {
   background: $color-white;
-  padding: $spacing-6;
+  padding: $spacing-24;
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
 
   &__success {
-    margin-top: $spacing-4;
+    margin-top: $spacing-16;
     color: $color-success;
   }
 }
