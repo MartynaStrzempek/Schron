@@ -40,3 +40,39 @@ provide('openAdminDrawer', () => {
   drawerOpen.value = true;
 });
 </script>
+
+<style scoped lang="scss">
+@use '~/assets/scss/variables' as *;
+  
+.admin {
+  &__layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+
+    @media (min-width: $breakpoint-tablet) {
+      grid-template-columns: 240px 1fr;
+    }
+  }
+
+  &__sidebar {
+    background: $color-white;
+    border-right: 1px solid $color-gray-200;
+    padding: $spacing-24 $spacing-16;
+    height: 100%;
+  }
+
+  &__sidebar--desktop {
+    display: none;
+
+    @media (min-width: $breakpoint-tablet) {
+      display: block;
+    }
+  }
+
+  &__content {
+    background: $color-gray-50;
+    min-height: 100vh;
+  }
+}
+</style>

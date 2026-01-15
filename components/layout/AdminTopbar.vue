@@ -46,6 +46,17 @@ const logout = () => {
 <style scoped lang="scss">
 @use '~/assets/scss/variables' as *;
 
+.admin {
+    &__topbar {
+      padding: $spacing-16 $spacing-24;
+      background: $color-white;
+      border-bottom: 1px solid $color-gray-200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+  }
+}
+
 .topbar {
   display: flex;
   align-items: center;
