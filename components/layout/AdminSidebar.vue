@@ -1,17 +1,14 @@
 <template>
+  //TODO: change root class for admin-sidebar
   <aside class="sidebar" aria-label="Panel administracyjny">
     <div class="sidebar__brand">Panel admina</div>
     <nav class="sidebar__nav">
-      <NuxtLink class="sidebar__link" to="/admin" @click="$emit('navigate')">Dashboard</NuxtLink>
-      <NuxtLink class="sidebar__link" to="/admin/animals" @click="$emit('navigate')">Zwierzęta</NuxtLink>
-      <NuxtLink class="sidebar__link" to="/" @click="$emit('navigate')">Strona publiczna</NuxtLink>
+      <NuxtLink class="sidebar__link" to="/admin">Dashboard</NuxtLink>
+      <NuxtLink class="sidebar__link" to="/admin/animals">Zwierzęta</NuxtLink>
+      <NuxtLink class="sidebar__link" to="/">Strona publiczna</NuxtLink>
     </nav>
   </aside>
 </template>
-
-<script setup lang="ts">
-defineEmits<{ (event: 'navigate'): void }>();
-</script>
 
 <style scoped lang="scss">
 @use '~/assets/scss/variables' as *;

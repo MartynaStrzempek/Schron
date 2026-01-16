@@ -8,7 +8,7 @@
     <StickyCta />
   </div>
 </template>
-
+// TODO: add new page: adopted animals
 <script setup lang="ts">
 import PublicHeader from '~/components/layout/PublicHeader.vue';
 import PublicFooter from '~/components/layout/PublicFooter.vue';

@@ -20,7 +20,7 @@
     </template>
   </n-card>
 </template>
-
+// TODO: display status only for admin
 <script setup lang="ts">
 import { NCard, NTag } from 'naive-ui';
 import type { Animal } from '~/types/animal';

@@ -8,7 +8,7 @@
       </div>
     </div>
     <n-drawer v-model:show="drawerOpen" placement="left" :width="240" :auto-focus="false">
-      <AdminSidebar class="admin__sidebar" @navigate="drawerOpen = false" />
+      <AdminSidebar class="admin__sidebar" />
     </n-drawer>
   </div>
 </template>

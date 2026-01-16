@@ -61,22 +61,16 @@ import {
   NSelect
 } from 'naive-ui';
 import type { Animal } from '~/types/animal';
+import type { FormInst } from 'naive-ui'
 
 const props = defineProps<{ initialValue: Animal }>();
 const emit = defineEmits<{ (event: 'save', value: Animal): void }>();
 
-const formRef = ref<InstanceType<typeof NForm> | null>(null);
+const formRef = ref<FormInst | null>(null);
 const saving = ref(false);
 const hasSubmitErrors = ref(false);
 
 const form = ref<Animal>({ ...props.initialValue });
-
-watch(
-  () => props.initialValue,
-  (value) => {
-    form.value = { ...value };
-  }
-);
 
 const typeOptions = [
   { label: 'Pies', value: 'pies' },
@@ -92,14 +86,15 @@ const genderOptions = [
   { label: 'Samica', value: 'samica' }
 ];
 const sizeOptions = [
-  { label: 'Mała', value: 'mała' },
-  { label: 'Średnia', value: 'średnia' },
-  { label: 'Duża', value: 'duża' }
+  { label: 'Mały', value: 'mały' },
+  { label: 'Średni', value: 'średni' },
+  { label: 'Duży', value: 'duży' }
 ];
+
 const statusOptions = [
   { label: 'Do adopcji', value: 'do adopcji' },
   { label: 'W trakcie', value: 'w trakcie' },
-  { label: 'Po adopcji', value: 'po adopcji' }
+  { label: 'Adoptowany', value: 'adoptowany' }
 ];
 
 const rules = {
@@ -122,6 +117,8 @@ const handleSubmit = async () => {
     return;
   }
   saving.value = true;
+
+  //TODO: Replace setTimeout with actual save logic (API call etc.)
   setTimeout(() => {
     saving.value = false;
     emit('save', { ...form.value, photos: form.value.photos.filter(Boolean) });

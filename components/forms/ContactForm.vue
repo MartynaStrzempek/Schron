@@ -22,7 +22,7 @@
     <n-button type="primary" attr-type="submit" :loading="submitting" :disabled="submitting">
       Wyślij wiadomość
     </n-button>
-    <p v-if="successMessage" class="contact-form__success" role="status">{{ successMessage }}</p>
+    <p v-if="isSubmitted" class="contact-form__success" role="status">{{ successMessage }}</p>
   </n-form>
 </template>
 
@@ -30,10 +30,12 @@
 import { ref } from 'vue';
 import { NButton, NForm, NFormItem, NInput } from 'naive-ui';
 
+const successMessage = 'Dziękujemy za wiadomość. Skontaktujemy się wkrótce.';
+
 const formRef = ref<InstanceType<typeof NForm> | null>(null);
 const submitting = ref(false);
-const successMessage = ref('');
 const hasSubmitErrors = ref(false);
+const isSubmitted = ref(false);
 
 const form = ref({
   name: '',
@@ -61,16 +63,18 @@ const rules = {
 
 const handleSubmit = async () => {
   hasSubmitErrors.value = false;
-  successMessage.value = '';
+  isSubmitted.value = false;
   const valid = await formRef.value?.validate().then(() => true).catch(() => false);
   if (!valid) {
     hasSubmitErrors.value = true;
     return;
   }
   submitting.value = true;
+
+  //TODO: Replace setTimeout with actual form submission logic (e.g., API call)
   setTimeout(() => {
     submitting.value = false;
-    successMessage.value = 'Dziękujemy za wiadomość. Skontaktujemy się wkrótce.';
+    isSubmitted.value = true;
     form.value = { name: '', email: '', message: '' };
   }, 800);
 };

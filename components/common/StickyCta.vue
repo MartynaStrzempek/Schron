@@ -13,11 +13,16 @@
 import { computed } from 'vue';
 import { getShelterInfo } from '~/repositories/shelter';
 
+// TODO: Replace with global state management. Execute only once on app load.
+// TODO: The same for animals data. Implement Observer to fetch only when needed.
 const { data } = await useAsyncData('shelter-info-cta', getShelterInfo);
 
-const shelter = computed(() => ({
-  phone: data.value?.phone ?? ''
-}));
+const shelter = computed(() => {
+  const phone = data.value?.phone ?? '';
+  return {
+    phone,
+  }
+});
 </script>
 
 <style scoped lang="scss">

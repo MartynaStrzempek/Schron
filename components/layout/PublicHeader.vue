@@ -1,4 +1,5 @@
 <template>
+   //TODO: change root class for public-header
   <header class="header">
     <div class="header__container">
       <NuxtLink to="/" class="header__logo" aria-label="Schronisko Nadzieja">

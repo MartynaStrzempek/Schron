@@ -36,7 +36,7 @@
     </div>
   </div>
 </template>
-
+// TODO: do not display adopted animals. The same in the admin panel
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import { NAlert, NButton, NEmpty, NInput, NPagination, NSelect, NSkeleton } from 'naive-ui';
