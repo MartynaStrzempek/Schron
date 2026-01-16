@@ -1,17 +1,17 @@
 <template>
   <div class="layout">
-    <PublicHeader />
+    <Header />
     <main class="layout__main">
       <slot />
     </main>
-    <PublicFooter />
+    <Footer />
     <StickyCta />
   </div>
 </template>
 // TODO: add new page: adopted animals
 <script setup lang="ts">
-import PublicHeader from '~/components/layout/PublicHeader.vue';
-import PublicFooter from '~/components/layout/PublicFooter.vue';
+import Header from '~/components/common/Header.vue';
+import Footer from '~/components/common/Footer.vue';
 import StickyCta from '~/components/common/StickyCta.vue';
 </script>
 

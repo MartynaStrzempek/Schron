@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-//TODO: change root class for public-header
+
 const isOpen = ref(false);
 </script>
 

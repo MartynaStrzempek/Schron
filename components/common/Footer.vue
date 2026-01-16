@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { getShelterInfo, type ShelterInfo } from '~/repositories/shelter';
-//TODO: change root class for public-footer
+
 const { data } = await useAsyncData('shelter-info', getShelterInfo);
 
 const shelter = computed<ShelterInfo>(() => ({
