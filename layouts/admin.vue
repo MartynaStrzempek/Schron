@@ -1,14 +1,14 @@
 <template>
   <div class="admin__layout">
-    <AdminSidebar v-if="!isLogin" class="admin__sidebar admin__sidebar--desktop" />
+    <Sidebar v-if="!isLogin" class="admin__sidebar admin__sidebar--desktop" />
     <div class="admin__content">
-      <AdminTopbar :title="pageTitle" :show-back="showBack" />
+      <Topbar :title="pageTitle" :show-back="showBack" />
       <div class="page__container">
         <slot />
       </div>
     </div>
     <n-drawer v-model:show="drawerOpen" placement="left" :width="240" :auto-focus="false">
-      <AdminSidebar class="admin__sidebar" />
+      <Sidebar class="admin__sidebar" />
     </n-drawer>
   </div>
 </template>
@@ -17,8 +17,8 @@
 import { computed, provide, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { NDrawer } from 'naive-ui';
-import AdminSidebar from '~/components/layout/AdminSidebar.vue';
-import AdminTopbar from '~/components/layout/AdminTopbar.vue';
+import Sidebar from '~/components/admin/Sidebar.vue';
+import Topbar from '~/components/admin/Topbar.vue';
 
 const route = useRoute();
 const drawerOpen = ref(false);
