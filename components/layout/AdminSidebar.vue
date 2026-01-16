@@ -1,5 +1,4 @@
 <template>
-  //TODO: change root class for admin-sidebar
   <aside class="sidebar" aria-label="Panel administracyjny">
     <div class="sidebar__brand">Panel admina</div>
     <nav class="sidebar__nav">
@@ -12,7 +11,7 @@
 
 <style scoped lang="scss">
 @use '~/assets/scss/variables' as *;
-
+//TODO: change root class for admin-sidebar
 .sidebar {
   display: flex;
   flex-direction: column;

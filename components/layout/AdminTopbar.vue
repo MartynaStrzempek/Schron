@@ -1,5 +1,4 @@
 <template>
-   //TODO: change root class for admin-topbar
   <div class="admin__topbar">
     <div class="topbar">
       <button
@@ -24,7 +23,7 @@
 import { computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NButton } from 'naive-ui';
-
+//TODO: change root class for admin-topbar
 const props = defineProps<{ title: string; showBack?: boolean }>();
 const openDrawer = inject<() => void>('openAdminDrawer');
 const route = useRoute();
