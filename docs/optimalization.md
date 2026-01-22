@@ -1,4 +1,4 @@
-# Lighthouse Report — Top 5 Things to Check
+# Lighthouse Report
 
 1. **LCP (Largest Contentful Paint)**
    - When the main/hero content becomes visible.
