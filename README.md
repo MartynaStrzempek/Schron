@@ -9,6 +9,14 @@ npm install
 npm run dev
 ```
 
+## Uruchamianie projektu w trybie prod
+Potrzebne dla raportu lighthouse
+
+```bash
+npm run build
+npx nuxi preview
+```
+
 ## Dane
 
 Dane znajdują się w pliku `data/mock_data.json` i są ładowane bezpośrednio przez warstwę repozytoriów (`repositories/`).
