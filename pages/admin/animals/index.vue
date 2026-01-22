@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-animals-page">
     <div class="admin-actions">
       <h2 class="section__title">Zarządzanie zwierzętami</h2>
       <n-button type="primary" @click="navigateTo('/admin/animals/new')">Dodaj zwierzę</n-button>
@@ -7,7 +7,6 @@
 
     <div v-if="loading" class="admin-list">
       <n-skeleton v-for="item in 4" :key="item" height="140px" />
-      <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
     </div>
     <div v-else-if="animals.length === 0" class="state">
       <n-empty description="Brak zwierząt w bazie">
@@ -39,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { NButton, NCard, NEmpty, NSkeleton, NTag } from 'naive-ui';
 import { useAnimalsStore } from '~/store/animals';
 
@@ -51,27 +50,11 @@ definePageMeta({
 
 const store = useAnimalsStore();
 const loading = ref(true);
-const showLoadingText = ref(false);
 
 onMounted(async () => {
   await store.init();
   loading.value = false;
 });
-
-watch(
-  loading,
-  (value) => {
-    if (value) {
-      showLoadingText.value = false;
-      setTimeout(() => {
-        if (loading.value) showLoadingText.value = true;
-      }, 800);
-    } else {
-      showLoadingText.value = false;
-    }
-  },
-  { immediate: true }
-);
 
 const animals = computed(() => store.animals);
 

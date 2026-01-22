@@ -1,7 +1,8 @@
 <template>
-  <div class="page__container">
-    <h1 class="page__title">Zwierzęta do adopcji</h1>
-    <div class="filters">
+  <div class="page animals-page ">
+    <div class="page__container">
+    <h1>Zwierzęta do adopcji</h1>
+    <div class="page__filters">
       <n-input v-model:value="filters.search" placeholder="Szukaj po imieniu" clearable />
       <n-select v-model:value="filters.type" :options="typeOptions" clearable placeholder="Typ" />
       <n-select v-model:value="filters.age" :options="ageOptions" clearable placeholder="Wiek" />
@@ -10,50 +11,60 @@
       <n-button secondary @click="resetFilters">Wyczyść filtry</n-button>
     </div>
 
-    <div v-if="pending" class="card-grid">
+    <div v-if="pending" class="page__loader">
       <n-skeleton v-for="item in 6" :key="item" height="240px" />
-      <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
     </div>
-    <div v-else-if="error" class="state">
+    <div v-else-if="error" class="page__error">
       <n-alert type="error" title="Błąd">
         Nie udało się pobrać listy. Spróbuj ponownie.
       </n-alert>
       <n-button @click="refresh">Spróbuj ponownie</n-button>
     </div>
-    <div v-else-if="filteredAnimals.length === 0" class="state">
+    <div v-else-if="filteredAnimals.length === 0" class="page__no-results">
       <n-empty description="Brak wyników">
         <template #extra>
           <n-button @click="resetFilters">Wyczyść filtry</n-button>
         </template>
       </n-empty>
     </div>
-    <div v-else class="card-grid">
+    <div v-else class="page__animals">
       <AnimalCard v-for="animal in pagedAnimals" :key="animal.id" :animal="animal" />
     </div>
 
-    <div v-if="!pending && filteredAnimals.length > pageSize" class="pagination">
-      <n-pagination v-model:page="page" :page-size="pageSize" :item-count="filteredAnimals.length" />
+    <div v-if="!pending && filteredAnimals.length > pageSize" class="page__pagination">
+      <n-pagination v-model:page="pageNumber" :page-size="pageSize" :item-count="filteredAnimals.length" />
+    </div>
     </div>
   </div>
 </template>
-// TODO: do not display adopted animals. The same in the admin panel
+
 <script setup lang="ts">
+  // TODO: do not display adopted animals. The same in the admin panel
 import { computed, reactive, ref, watch } from 'vue';
 import { NAlert, NButton, NEmpty, NInput, NPagination, NSelect, NSkeleton } from 'naive-ui';
 import AnimalCard from '~/components/cards/AnimalCard.vue';
 import { getAnimals } from '~/repositories/animals';
 
+// TODO: should get data from store instead send request here
 const { data, pending, error, refresh } = await useAsyncData('animals-list', getAnimals);
-const showLoadingText = ref(false);
 
-const filters = reactive({
+type Filters = {
+  search: string
+  type: string | null
+  age: string | null
+  gender: string | null
+  size: string | null
+}
+
+const filters = reactive<Filters>({
   search: '',
-  type: null as string | null,
-  age: null as string | null,
-  gender: null as string | null,
-  size: null as string | null
+  type: null,
+  age: null,
+  gender: null,
+  size: null,
 });
 
+// TODO: move business logic to external file and find other business logic in other components
 const typeOptions = [
   { label: 'Pies', value: 'pies' },
   { label: 'Kot', value: 'kot' }
@@ -68,13 +79,13 @@ const genderOptions = [
   { label: 'Samica', value: 'samica' }
 ];
 const sizeOptions = [
-  { label: 'Mała', value: 'mała' },
-  { label: 'Średnia', value: 'średnia' },
-  { label: 'Duża', value: 'duża' }
+  { label: 'Mały', value: 'mały' },
+  { label: 'Średni', value: 'średni' },
+  { label: 'Duży', value: 'duży' }
 ];
 
-const page = ref(1);
-const pageSize = 6;
+const pageNumber = ref(1);
+const pageSize = 18;
 
 const filteredAnimals = computed(() => {
   const list = data.value ?? [];
@@ -89,7 +100,7 @@ const filteredAnimals = computed(() => {
 });
 
 const pagedAnimals = computed(() => {
-  const start = (page.value - 1) * pageSize;
+  const start = (pageNumber.value - 1) * pageSize;
   return filteredAnimals.value.slice(start, start + pageSize);
 });
 
@@ -102,25 +113,11 @@ const resetFilters = () => {
 };
 
 watch(
-  () => ({ ...filters }),
+  filters,
   () => {
-    page.value = 1;
-  }
-);
-
-watch(
-  pending,
-  (value) => {
-    if (value) {
-      showLoadingText.value = false;
-      setTimeout(() => {
-        if (pending.value) showLoadingText.value = true;
-      }, 800);
-    } else {
-      showLoadingText.value = false;
-    }
+    pageNumber.value = 1;
   },
-  { immediate: true }
+  { deep: true }
 );
 
 useHead({
@@ -137,39 +134,43 @@ useHead({
 <style scoped lang="scss">
 @use '~/assets/scss/variables' as *;
 
-.filters {
-  display: grid;
-  gap: $spacing-12;
-  margin-bottom: $spacing-24;
+.page {
+  &__filters {
+    display: grid;
+    gap: $spacing-12;
+    margin-bottom: $spacing-24;
 
-  @media (min-width: $breakpoint-tablet) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    @media (min-width: $breakpoint-tablet) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
-}
 
-.card-grid {
-  display: grid;
-  gap: $spacing-24;
+  &__loader,
+  &__animals {
+    display: grid;
+    gap: $spacing-24;
 
-  @media (min-width: $breakpoint-tablet) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    @media (min-width: $breakpoint-tablet) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
-}
 
-.pagination {
-  margin-top: $spacing-24;
-  display: flex;
-  justify-content: center;
-}
+  &__pagination {
+    margin-top: $spacing-24;
+    display: flex;
+    justify-content: center;
+  }
 
-.state {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-16;
-  align-items: flex-start;
+  &_no-results,
+  &__error {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-16;
+    align-items: flex-start;
 
-  &__loading {
-    color: $color-gray-500;
+    &__loading {
+      color: $color-gray-500;
+    }
   }
 }
 </style>

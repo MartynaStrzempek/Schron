@@ -10,7 +10,10 @@
 
 <script setup lang="ts">
 import { NConfigProvider, NMessageProvider, type GlobalThemeOverrides } from 'naive-ui';
-
+// TODO: move requests to server side
+// TODO: implement lazy loading for images
+// TODO: implement infinite scroll
+// TODO: use constants for that object
 const themeOverrides: GlobalThemeOverrides = {
   common: {
     primaryColor: '#2F855A',

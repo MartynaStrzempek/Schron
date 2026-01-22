@@ -8,8 +8,10 @@
     <StickyCta />
   </div>
 </template>
-// TODO: add new page: adopted animals
+
 <script setup lang="ts">
+// TODO: add new page: adopted animals
+// TODO: change class for default layout
 import Header from '~/components/common/Header.vue';
 import Footer from '~/components/common/Footer.vue';
 import StickyCta from '~/components/common/StickyCta.vue';

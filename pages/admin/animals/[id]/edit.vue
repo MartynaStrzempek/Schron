@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="admin-edit-animal-page">
     <h2 class="section__title">Edytuj zwierzę</h2>
     <div v-if="loading">
       <n-skeleton height="320px" />
     </div>
-    <div v-else-if="!animal" class="state">
+    <div v-else-if="!animal" class="no-found-message">
       <n-empty description="Nie znaleziono zwierzęcia" />
     </div>
     <AnimalForm v-else :initial-value="animal" @save="handleSave" />
@@ -33,10 +33,12 @@ onMounted(async () => {
   loading.value = false;
 });
 
-const animal = computed(() => store.animals.find((item) => item.id === route.params.id) || null);
+const animalId = computed(() => route.params.id);
+const animal = computed(() => store.animals.find((item) => item.id === animalId.value) || null);
 
 const handleSave = (payload: Animal) => {
   if (!animal.value) return;
+  // TODO: add await and loading state when backend is ready
   store.updateAnimal(animal.value.id, payload);
   navigateTo('/admin/animals');
 };
@@ -45,7 +47,7 @@ const handleSave = (payload: Animal) => {
 <style scoped lang="scss">
 @use '~/assets/scss/variables' as *;
 
-.state {
+.no-found-message {
   margin-top: $spacing-16;
 }
 </style>

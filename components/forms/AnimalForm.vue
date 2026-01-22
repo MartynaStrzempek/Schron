@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import {
   NButton,
   NCheckbox,
@@ -61,17 +61,16 @@ import {
   NSelect
 } from 'naive-ui';
 import type { Animal } from '~/types/animal';
-import type { FormInst } from 'naive-ui'
 
 const props = defineProps<{ initialValue: Animal }>();
 const emit = defineEmits<{ (event: 'save', value: Animal): void }>();
 
-const formRef = ref<FormInst | null>(null);
+const formRef = useTemplateRef("formRef");
 const saving = ref(false);
 const hasSubmitErrors = ref(false);
 
 const form = ref<Animal>({ ...props.initialValue });
-
+// TODO: use constants from one file (single source of truth) for options and in pages/animals/index.vue
 const typeOptions = [
   { label: 'Pies', value: 'pies' },
   { label: 'Kot', value: 'kot' }

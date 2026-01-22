@@ -19,10 +19,11 @@ import { useRoute } from 'vue-router';
 import { NDrawer } from 'naive-ui';
 import Sidebar from '~/components/admin/Sidebar.vue';
 import Topbar from '~/components/admin/Topbar.vue';
-
+// TODO: change class root for 'admin', change page__container to admin__page-container
 const route = useRoute();
+// TODO: change name for isDrawerOpen
 const drawerOpen = ref(false);
-
+// TODO: change isLogin to isLoginPage
 const isLogin = computed(() => route.path === '/admin/login');
 const pageTitle = computed(() =>
   route.meta.title ? String(route.meta.title) : 'Panel administracyjny'

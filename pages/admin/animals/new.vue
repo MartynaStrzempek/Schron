@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-new-animal-page">
     <h2 class="section__title">Dodaj zwierzę</h2>
     <div v-if="loading">
       <n-skeleton height="320px" />
@@ -44,6 +44,7 @@ onMounted(async () => {
 });
 
 const handleSave = (animal: Animal) => {
+  // TODO: add await and loading state when backend is ready
   store.addAnimal(animal);
   navigateTo('/admin/animals');
 };

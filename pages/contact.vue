@@ -1,22 +1,24 @@
 <template>
-  <div class="page__container contact">
-    <div>
-      <h1 class="page__title">Kontakt</h1>
-      <div class="contact__details">
-        <p><strong>Telefon:</strong> <a :href="`tel:${shelter.phone}`">{{ shelter.phone }}</a></p>
-        <p><strong>Email:</strong> <a :href="`mailto:${shelter.email}`">{{ shelter.email }}</a></p>
-        <p><strong>Adres:</strong> {{ shelter.address }}</p>
-        <p><strong>Godziny otwarcia:</strong> {{ shelter.openingHours }}</p>
+  <div class="page contact-page">
+    <div class="page__container page__container--grid">
+      <div>
+        <h1 class="page__title">Kontakt</h1>
+        <div class="contact-details">
+          <p><strong>Telefon:</strong> <a :href="`tel:${shelter.phone}`">{{ shelter.phone }}</a></p>
+          <p><strong>Email:</strong> <a :href="`mailto:${shelter.email}`">{{ shelter.email }}</a></p>
+          <p><strong>Adres:</strong> {{ shelter.address }}</p>
+          <p><strong>Godziny otwarcia:</strong> {{ shelter.openingHours }}</p>
+        </div>
+        <ContactForm />
       </div>
-      <ContactForm />
-    </div>
-    <div class="contact__map">
-      <iframe
-        :src="shelter.mapEmbedUrl"
-        loading="lazy"
-        title="Mapa schroniska"
-        aria-label="Mapa schroniska"
-      ></iframe>
+      <div class="contact-map">
+        <iframe
+          :src="shelter.mapEmbedUrl"
+          loading="lazy"
+          title="Mapa schroniska"
+          aria-label="Mapa schroniska"
+        ></iframe>
+      </div>
     </div>
   </div>
 </template>
@@ -50,25 +52,29 @@ useHead({
 <style scoped lang="scss">
 @use '~/assets/scss/variables' as *;
 
-.contact {
-  display: grid;
-  gap: $spacing-32;
+.page {
+  &__container {
+    &--grid {
+      display: grid;
+      gap: $spacing-32;
 
-  @media (min-width: $breakpoint-tablet) {
-    grid-template-columns: 1.1fr 0.9fr;
+      @media (min-width: $breakpoint-tablet) {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+    }
   }
+}
 
-  &__details {
-    margin-bottom: $spacing-24;
-    color: $color-gray-500;
-  }
+.contact-details {
+  margin-bottom: $spacing-24;
+  color: $color-gray-500;
+}
 
-  &__map iframe {
-    width: 100%;
-    height: 420px;
-    border: 0;
-    border-radius: $radius-lg;
-    box-shadow: $shadow-sm;
-  }
+.contact-map iframe {
+  width: 100%;
+  height: 420px;
+  border: 0;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
 }
 </style>

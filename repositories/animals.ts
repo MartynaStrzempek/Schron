@@ -6,6 +6,7 @@ export const getAnimals = async (): Promise<Animal[]> => {
 };
 
 export const getAnimalById = async (id: string): Promise<Animal | undefined> => {
+  // TODO: change for request to get animal by id from backend
   const animals = await getAnimals();
   return animals.find((animal) => animal.id === id);
 };

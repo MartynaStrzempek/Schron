@@ -27,12 +27,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import { NButton, NForm, NFormItem, NInput } from 'naive-ui';
 
 const successMessage = 'Dziękujemy za wiadomość. Skontaktujemy się wkrótce.';
 
-const formRef = ref<InstanceType<typeof NForm> | null>(null);
+const formRef = useTemplateRef("formRef");
 const submitting = ref(false);
 const hasSubmitErrors = ref(false);
 const isSubmitted = ref(false);

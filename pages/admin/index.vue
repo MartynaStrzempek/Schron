@@ -1,11 +1,10 @@
 <template>
-  <div>
+  <div class="admin-dashboard-page">
     <h2 class="section__title">Dashboard</h2>
     <div v-if="loading" class="dashboard">
       <n-skeleton height="120px" />
       <n-skeleton height="120px" />
       <n-skeleton height="120px" />
-      <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
     </div>
     <div v-else class="dashboard">
       <n-card>
@@ -18,11 +17,11 @@
       </n-card>
       <n-card>
         <h3>Do adopcji</h3>
-        <p class="dashboard__value">{{ adoptionCount }}</p>
+        <p class="dashboard__value">{{ toAdoptionCount }}</p>
       </n-card>
     </div>
 
-    <section class="recent">
+    <div class="recent">
       <h3 class="section__title">Ostatnio dodane zwierzęta</h3>
       <div v-if="loading" class="recent__list">
         <n-skeleton v-for="item in 3" :key="item" height="80px" />
@@ -41,7 +40,7 @@
           </div>
         </n-card>
       </div>
-    </section>
+    </div>
   </div>
 </template>
 
@@ -58,32 +57,16 @@ definePageMeta({
 
 const store = useAnimalsStore();
 const loading = ref(true);
-const showLoadingText = ref(false);
 
 onMounted(async () => {
   await store.init();
   loading.value = false;
 });
 
-watch(
-  loading,
-  (value) => {
-    if (value) {
-      showLoadingText.value = false;
-      setTimeout(() => {
-        if (loading.value) showLoadingText.value = true;
-      }, 800);
-    } else {
-      showLoadingText.value = false;
-    }
-  },
-  { immediate: true }
-);
-
 const animals = computed(() => store.animals);
 const urgentCount = computed(() => store.urgentAnimals.length);
-const adoptionCount = computed(() => store.animals.filter((animal) => animal.status === 'do adopcji').length);
-const recentAnimals = computed(() => store.animals.slice().reverse().slice(0, 3));
+const toAdoptionCount = computed(() => store.animals.filter((animal) => animal.status === 'do adopcji').length);
+const recentAnimals = computed(() => [...store.animals].reverse().slice(0, 3));
 </script>
 
 <style scoped lang="scss">

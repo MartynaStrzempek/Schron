@@ -25,6 +25,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { NButton } from 'naive-ui';
 //TODO: change root class for admin-topbar
 const props = defineProps<{ title: string; showBack?: boolean }>();
+// TODO: inject is not needed here. change for prop
 const openDrawer = inject<() => void>('openAdminDrawer');
 const route = useRoute();
 const router = useRouter();

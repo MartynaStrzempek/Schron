@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import { NButton, NCard, NForm, NFormItem, NInput } from 'naive-ui';
 
 definePageMeta({
@@ -32,7 +32,8 @@ definePageMeta({
   title: 'Logowanie'
 });
 
-const formRef = ref<InstanceType<typeof NForm> | null>(null);
+const ERROR_MESSAGE = 'Nieprawidłowe dane logowania.';
+const formRef = useTemplateRef("formRef");
 const loading = ref(false);
 const errorMessage = ref('');
 const hasSubmitErrors = ref(false);
@@ -59,12 +60,12 @@ const handleLogin = async () => {
   setTimeout(() => {
     loading.value = false;
     if (form.value.email && form.value.password) {
-      // Placeholder frontend-only auth. Replace with real backend authentication.
+      // TODO: Placeholder frontend-only auth. Replace with real backend authentication.
       const authCookie = useCookie('admin_auth');
       authCookie.value = 'true';
       navigateTo('/admin');
     } else {
-      errorMessage.value = 'Nieprawidłowe dane logowania.';
+      errorMessage.value = ERROR_MESSAGE;
     }
   }, 600);
 };

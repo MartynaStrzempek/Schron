@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page home-page">
     <section class="hero">
       <div class="hero__content">
         <p class="hero__eyebrow">Razem pomagamy zwierzętom</p>
@@ -19,46 +19,58 @@
       </div>
     </section>
 
-    <section class="page__container">
-      <div class="section__header">
-        <h2 class="section__title">Wyróżnione zwierzęta</h2>
-        <p class="section__subtitle">Poznaj podopiecznych, którzy pilnie szukają domu.</p>
+    <section class="page__container featured-animals">
+      <div class="featured-animals__header">
+        <h2 class="featured-animals__title">Wyróżnione zwierzęta</h2>
+        <p class="featured-animals__subtitle">Poznaj podopiecznych, którzy pilnie szukają domu.</p>
       </div>
-      <div v-if="pending" class="card-grid">
+
+      <div v-if="pending" class="featured-animals__grid">
         <n-skeleton v-for="item in 3" :key="item" height="260px" />
-        <p v-if="showLoadingText" class="state__loading">Ładowanie...</p>
       </div>
-      <div v-else-if="error" class="state">
+
+      <div v-else-if="error" class="featured-animals__error-message">
         <n-alert type="error" title="Błąd">
           Nie udało się pobrać zwierząt. Spróbuj ponownie.
         </n-alert>
-        <n-button @click="refresh">Spróbuj ponownie</n-button>
+        <n-button class="featured-animals__retry" @click="refresh">Spróbuj ponownie</n-button>
       </div>
-      <div v-else-if="featuredAnimals.length === 0" class="state">
+
+      <div v-else-if="featuredAnimals.length === 0" class="featured-animals__empty-result-message">
         <n-empty description="Brak wyróżnionych zwierząt" />
       </div>
-      <div v-else class="card-grid">
-        <AnimalCard v-for="animal in featuredAnimals" :key="animal.id" :animal="animal" />
+
+      <div v-else class="featured-animals__grid">
+        <AnimalCard
+          v-for="animal in featuredAnimals"
+          :key="animal.id"
+          :animal="animal"
+          class="featured-animals__card"
+        />
       </div>
     </section>
 
-    <section class="info">
-      <div class="info__content">
-        <h2 class="section__title">Dlaczego warto adoptować?</h2>
-        <p class="section__subtitle">
+    <section class="page__container adoption-info">
+      <div class="adoption-info__content">
+        <h2 class="adoption-info__title">Dlaczego warto adoptować?</h2>
+        <p class="adoption-info__subtitle">
           Adoptując, dajesz szansę na nowe życie i wspierasz lokalne działania NGO.
         </p>
-        <ul class="info__list">
-          <li>Pełne wsparcie behawioralne i adopcyjne.</li>
-          <li>Zweryfikowane zdrowie i opieka weterynaryjna.</li>
-          <li>Możliwość kontaktu z opiekunem po adopcji.</li>
+
+        <ul class="adoption-info__list">
+          <li class="adoption-info__item">Pełne wsparcie behawioralne i adopcyjne.</li>
+          <li class="adoption-info__item">Zweryfikowane zdrowie i opieka weterynaryjna.</li>
+          <li class="adoption-info__item">Możliwość kontaktu z opiekunem po adopcji.</li>
         </ul>
       </div>
-      <div class="info__cta">
-        <n-card>
-          <h3>Masz pytania?</h3>
-          <p>Zadzwoń do nas lub wypełnij formularz kontaktowy.</p>
-          <n-button type="primary" @click="navigateTo('/contact')">Kontakt</n-button>
+
+      <div class="adoption-info__cta">
+        <n-card class="adoption-info__card">
+          <h3 class="adoption-info__card-title">Masz pytania?</h3>
+          <p class="adoption-info__card-text">Zadzwoń do nas lub wypełnij formularz kontaktowy.</p>
+          <n-button class="adoption-info__button" type="primary" @click="navigateTo('/contact')">
+            Kontakt
+          </n-button>
         </n-card>
       </div>
     </section>
@@ -71,23 +83,8 @@ import { NAlert, NButton, NCard, NEmpty, NSkeleton } from 'naive-ui';
 import AnimalCard from '~/components/cards/AnimalCard.vue';
 import { getAnimals } from '~/repositories/animals';
 
+// TODO: should not get data, should use action getAnimals from store
 const { data, pending, error, refresh } = await useAsyncData('home-animals', getAnimals);
-const showLoadingText = ref(false);
-
-watch(
-  pending,
-  (value) => {
-    if (value) {
-      showLoadingText.value = false;
-      setTimeout(() => {
-        if (pending.value) showLoadingText.value = true;
-      }, 800);
-    } else {
-      showLoadingText.value = false;
-    }
-  },
-  { immediate: true }
-);
 
 const featuredAnimals = computed(() => (data.value ?? []).filter((animal) => animal.featured).slice(0, 3));
 
@@ -146,21 +143,32 @@ useHead({
   }
 }
 
-.card-grid {
-  display: grid;
-  gap: $spacing-24;
+.featured-animals {
+  &__grid {
+    display: grid;
+    gap: $spacing-24;
 
-  @media (min-width: $breakpoint-tablet) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    @media (min-width: $breakpoint-tablet) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__error-message,
+  &__empty-result-message {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-16;
+    align-items: flex-start;
+
+    &__loading {
+      color: $color-gray-500;
+    }
   }
 }
 
-.info {
+.adoption-info {
   display: grid;
   gap: $spacing-32;
-  max-width: 1200px;
-  margin: 0 auto $spacing-48;
-  padding: 0 $spacing-16;
 
   @media (min-width: $breakpoint-tablet) {
     grid-template-columns: 2fr 1fr;
@@ -168,17 +176,6 @@ useHead({
 
   &__list {
     padding-left: $spacing-16;
-  }
-}
-
-.state {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-16;
-  align-items: flex-start;
-
-  &__loading {
-    color: $color-gray-500;
   }
 }
 </style>

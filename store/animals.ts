@@ -2,12 +2,11 @@ import { defineStore } from 'pinia';
 import type { Animal } from '~/types/animal';
 import { getAnimals } from '~/repositories/animals';
 
-const STORAGE_KEY = 'schron_animals';
+const STORAGE_KEY = 'shelter_animals';
 
 export const useAnimalsStore = defineStore('animals', {
   state: () => ({
     animals: [] as Animal[],
-    initialized: false
   }),
   getters: {
     urgentAnimals(state) {
@@ -18,20 +17,22 @@ export const useAnimalsStore = defineStore('animals', {
     }
   },
   actions: {
+    // TODO: use init only on layouts
+    // TODO: implement proper cache
+    // HTTP caching (ETag/Last-Modified) - is it needed? animals should change if new added
+    // use somthenig better than observer to not rerender data during user time
     async init() {
-      if (this.initialized) return;
-
-      const fallback = await getAnimals();
+      // Move that request to fetchAnimals action (create new one)
+      const animalsList = await getAnimals();
 
       if (process.client) {
         const stored = localStorage.getItem(STORAGE_KEY);
-        this.animals = stored ? (JSON.parse(stored) as Animal[]) : fallback;
+        this.animals = stored ? (JSON.parse(stored) as Animal[]) : animalsList;
       } else {
-        this.animals = fallback;
+        this.animals = animalsList;
       }
-
-      this.initialized = true;
     },
+    // TODO: is persist needed in this app?
     persist() {
       if (!process.client) return;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.animals));

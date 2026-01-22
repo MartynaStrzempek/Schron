@@ -1,42 +1,69 @@
 <template>
-  <div class="page__container">
-    <n-button secondary @click="navigateTo('/animals')">Wróć do listy</n-button>
-    <div v-if="pending" class="detail">
-      <n-skeleton height="320px" />
-      <n-skeleton text :repeat="4" />
-    </div>
-    <div v-else-if="error" class="state">
-      <n-alert type="error" title="Błąd">Nie udało się pobrać danych.</n-alert>
-      <n-button @click="refresh">Spróbuj ponownie</n-button>
-    </div>
-    <div v-else class="detail">
-      <div class="detail__gallery">
-        <img v-for="(photo, index) in animal.photos" :key="photo" :src="photo" :alt="`${animal.name} ${index + 1}`" />
+  <div class="page animal-page">
+    <div class="page__container">
+      <n-button class="page__back" secondary @click="navigateTo('/animals')">
+        Wróć do listy
+      </n-button>
+
+      <div v-if="pending" class="page__loader">
+        <n-skeleton height="320px" />
+        <n-skeleton text :repeat="4" />
       </div>
-      <div class="detail__info">
-        <h1 class="detail__title">{{ animal.name }}</h1>
-        <div class="detail__tags">
-          <n-tag type="success">{{ animal.status }}</n-tag>
-          <n-tag v-if="animal.urgent" type="warning">Pilne</n-tag>
+
+      <div v-else-if="error" class="page__error">
+        <n-alert type="error" title="Błąd">Nie udało się pobrać danych.</n-alert>
+        <n-button class="page__retry" @click="refresh">Spróbuj ponownie</n-button>
+      </div>
+
+      <div v-else class="animal-details">
+        <div class="animal-details__gallery">
+          <img
+            v-for="(photo, index) in animal.photos"
+            :key="photo"
+            :src="photo"
+            :alt="`${animal.name} ${index + 1}`"
+            class="animal-details__photo"
+          />
         </div>
-        <p class="detail__description">{{ animal.description }}</p>
-        <ul class="detail__list">
-          <li><strong>Wiek:</strong> {{ animal.age }}</li>
-          <li><strong>Płeć:</strong> {{ animal.gender }}</li>
-          <li><strong>Wielkość:</strong> {{ animal.size }}</li>
-          <li><strong>Data przyjęcia:</strong> {{ animal.intakeDate }}</li>
-          <li><strong>Czas w schronisku:</strong> {{ timeInShelter }}</li>
-        </ul>
-        <div class="detail__actions">
-          <n-button type="primary" :href="`tel:${shelter.phone}`" tag="a">Zadzwoń</n-button>
-          <n-button secondary :href="shelter.adoptionFormUrl" tag="a" target="_blank" rel="noopener">
-            Ankieta adopcyjna
-          </n-button>
+
+        <div class="animal-details__info">
+          <h1 class="animal-details__title">{{ animal.name }}</h1>
+
+          <div class="animal-details__tags">
+            <n-tag type="success">{{ animal.status }}</n-tag>
+            <n-tag v-if="animal.urgent" type="warning">Pilne</n-tag>
+          </div>
+
+          <p class="animal-details__description">{{ animal.description }}</p>
+
+          <ul class="animal-details__list">
+            <li class="animal-details__item"><strong>Wiek:</strong> {{ animal.age }}</li>
+            <li class="animal-details__item"><strong>Płeć:</strong> {{ animal.gender }}</li>
+            <li class="animal-details__item"><strong>Wielkość:</strong> {{ animal.size }}</li>
+            <li class="animal-details__item"><strong>Data przyjęcia:</strong> {{ animal.intakeDate }}</li>
+            <li class="animal-details__item"><strong>Czas w schronisku:</strong> {{ timeInShelter }}</li>
+          </ul>
+
+          <div class="animal-details__actions">
+            <n-button type="primary" :href="`tel:${shelter.phone}`" tag="a">
+              Zadzwoń
+            </n-button>
+            <n-button
+              secondary
+              :href="shelter.adoptionFormUrl"
+              tag="a"
+              target="_blank"
+              rel="noopener"
+            >
+              Ankieta adopcyjna
+            </n-button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { computed } from 'vue';
@@ -63,14 +90,14 @@ const shelter = computed(() => ({
 }));
 
 const timeInShelter = computed(() => {
-  const intake = new Date(animal.value.intakeDate);
-  const now = new Date();
-  const days = Math.floor((now.getTime() - intake.getTime()) / (1000 * 60 * 60 * 24));
-  return `${days} dni`;
+  const intakeDate = new Date(animal.value.intakeDate);
+  const nowDate = new Date();
+  const daysSinceIntakeToNow = Math.floor((nowDate.getTime() - intakeDate.getTime()) / (1000 * 60 * 60 * 24));
+  return `${daysSinceIntakeToNow} dni`;
 });
 
 useHead({
-  title: animal.value?.name ?? 'Zwierzę',
+  title: animal.value?.name ?? '',
   meta: [
     {
       name: 'description',
@@ -83,7 +110,15 @@ useHead({
 <style scoped lang="scss">
 @use '~/assets/scss/variables' as *;
 
-.detail {
+.page {
+  &__error {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-16;
+    margin-top: $spacing-24;
+  }
+}
+.animal-details {
   margin-top: $spacing-24;
   display: grid;
   gap: $spacing-32;
@@ -126,12 +161,5 @@ useHead({
     margin-top: $spacing-16;
     flex-wrap: wrap;
   }
-}
-
-.state {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-16;
-  margin-top: $spacing-24;
 }
 </style>

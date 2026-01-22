@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+// TODO: Implement methods for togling the mobile menu and closing it when a link is clicked
 
 const isOpen = ref(false);
 </script>

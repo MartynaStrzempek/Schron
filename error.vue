@@ -12,6 +12,7 @@ import { NButton } from 'naive-ui';
 
 const error = useError();
 
+// TODO: use constants for status codes, messages and titles
 const title = computed(() => {
   if (error.value?.statusCode === 404) return 'Nie znaleziono';
   if (error.value?.statusCode === 401 || error.value?.statusCode === 403) return 'Brak uprawnień';
