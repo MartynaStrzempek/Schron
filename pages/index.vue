@@ -15,7 +15,40 @@
         </div>
       </div>
       <div class="hero__image">
-        <img src="https://placehold.co/600x480?text=Schronisko" alt="Adopcja zwierząt" />
+        <picture>
+          <source
+            type="image/webp"
+            srcset="
+              /images/hero/hero-320.webp 320w,
+              /images/hero/hero-480.webp 480w,
+              /images/hero/hero-640.webp 640w,
+              /images/hero/hero-768.webp 768w,
+              /images/hero/hero-960.webp 960w,
+              /images/hero/hero-1200.webp 1200w
+            "
+            sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              600px
+            "
+          />
+          <img
+            src="/images/hero/hero-768.jpg"
+            srcset="
+              /images/hero/hero-320.jpg 320w,
+              /images/hero/hero-480.jpg 480w,
+              /images/hero/hero-640.jpg 640w,
+              /images/hero/hero-768.jpg 768w,
+              /images/hero/hero-960.jpg 960w,
+              /images/hero/hero-1200.jpg 1200w
+            "
+            sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              600px
+            "
+            alt="Schronisko dla zwierząt Nadzieja"
+            fetchpriority="high"
+          />
+        </picture>
       </div>
     </section>
 
@@ -137,9 +170,16 @@ useHead({
     gap: $spacing-12;
   }
 
-  &__image img {
-    border-radius: $radius-lg;
-    box-shadow: $shadow-md;
+  &__image {
+    aspect-ratio: 16 / 9;
+
+    img {
+      border-radius: $radius-lg;
+      box-shadow: $shadow-md;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   ssr: true,
-  css: ['~/assets/scss/main.scss'],
+  css: ['~/assets/scss/main.scss', '~/assets/css/fonts.css'],
   modules: ['@pinia/nuxt'],
   app: {
     head: {
@@ -10,14 +10,32 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' }
       ],
       link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+          rel: "preload",
+          as: "font",
+          type: "font/woff2",
+          href: "/fonts/Inter/inter-latin-ext-400-normal.woff2",
+          crossorigin: "anonymous"
         }
       ]
     }
+  },
+  routeRules: {
+    "/_nuxt/**": {
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    "/images/**": {
+      headers: {
+        "Cache-Control": "public, max-age=2592000, stale-while-revalidate=300"
+      }
+    },
+    "/fonts/**": {
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
   },
   build: {
     transpile: ['naive-ui']
