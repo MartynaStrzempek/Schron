@@ -20,6 +20,10 @@ const title = computed(() => {
 });
 
 const message = computed(() => {
+  if (import.meta.dev) {
+    return error.value?.stack || error.value?.message || error.value?.statusMessage || 'Unknown error';
+  }
+  
   if (error.value?.statusCode === 404) return 'Nie znaleziono wskazanej strony.';
   if (error.value?.statusCode === 401 || error.value?.statusCode === 403)
     return 'Nie masz dostępu do tego zasobu. Zaloguj się ponownie.';

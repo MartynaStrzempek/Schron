@@ -12,9 +12,15 @@
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
     "@pinia/nuxt": "^0.5.1",
-    "naive-ui": "^2.39.0",
-    "nuxt": "^3.12.4",
+    "naive-ui": "^2.43.2",
+    "nuxt": "^3.17.5",
+    "nuxtjs-naive-ui": "^1.0.2",
     "pinia": "^2.1.7"
+  },
+  "overrides": {
+    "@css-render/plugin-bem": "0.15.14",
+    "@css-render/vue3-ssr": "0.15.14",
+    "css-render": "0.15.14"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

@@ -1,7 +1,15 @@
 export default defineNuxtConfig({
   ssr: true,
   css: ['~/assets/scss/main.scss', '~/assets/css/fonts.css'],
-  modules: ['@pinia/nuxt'],
+  modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],
+  build: {
+    transpile: ['naive-ui', 'vueuc']
+  },
+  vite: {
+    ssr: {
+      noExternal: ['naive-ui', 'vueuc']
+    }
+  },
   app: {
     head: {
       titleTemplate: '%s · Schronisko Nadzieja',
@@ -36,8 +44,5 @@ export default defineNuxtConfig({
         "Cache-Control": "public, max-age=31536000, immutable"
       }
     },
-  },
-  build: {
-    transpile: ['naive-ui']
   }
 });
