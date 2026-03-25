@@ -22,7 +22,6 @@ definePageMeta({
 });
 
 const store = useAnimalsStore();
-const loading = ref(true);
 const formValue = ref<Animal>({
   id: crypto.randomUUID(),
   name: '',
@@ -39,8 +38,6 @@ const formValue = ref<Animal>({
 });
 
 onMounted(async () => {
-  await store.init();
-  loading.value = false;
 });
 
 const handleSave = (animal: Animal) => {

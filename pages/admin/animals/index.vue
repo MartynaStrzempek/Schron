@@ -49,11 +49,8 @@ definePageMeta({
 });
 
 const store = useAnimalsStore();
-const loading = ref(true);
 
 onMounted(async () => {
-  await store.init();
-  loading.value = false;
 });
 
 const animals = computed(() => store.animals);

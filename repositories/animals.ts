@@ -1,6 +1,8 @@
 import type { Animal } from '~/types/animal';
+import { delay } from '~/utils/delay';
 
 export const getAnimals = async (): Promise<Animal[]> => {
+  await delay(300);
   const data = await import('~/data/mock_data.json');
   return data.default.animals as Animal[];
 };

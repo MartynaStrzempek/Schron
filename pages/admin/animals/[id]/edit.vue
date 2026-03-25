@@ -25,12 +25,9 @@ definePageMeta({
 });
 
 const store = useAnimalsStore();
-const loading = ref(true);
 const route = useRoute();
 
 onMounted(async () => {
-  await store.init();
-  loading.value = false;
 });
 
 const animalId = computed(() => route.params.id);

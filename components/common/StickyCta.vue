@@ -14,7 +14,7 @@ import { computed } from 'vue';
 import { getShelterInfo } from '~/repositories/shelter';
 
 // TODO: Replace with global state management. Execute only once on app load.
-// TODO: The same for animals data. Implement Observer to fetch only when needed.
+// TODO: The same for animals data.
 const { data } = await useAsyncData('shelter-info-cta', getShelterInfo);
 
 const shelter = computed(() => {

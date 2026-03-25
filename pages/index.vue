@@ -111,15 +111,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { NAlert, NButton, NCard, NEmpty, NSkeleton } from 'naive-ui';
 import AnimalCard from '~/components/cards/AnimalCard.vue';
-import { getAnimals } from '~/repositories/animals';
+import { useAnimals } from '~/composables/useAnimals';
+import {useAnimalsStore} from "~/store/animals";
 
 // TODO: should not get data, should use action getAnimals from store
-const { data, pending, error, refresh } = await useAsyncData('home-animals', getAnimals);
-
+const { data, pending, error, refresh } = await useAnimals(); // check if works
 const featuredAnimals = computed(() => (data.value ?? []).filter((animal) => animal.featured).slice(0, 3));
+
+const animalsStore = useAnimalsStore();
+
+watch(() => data.value, (value) => {
+  if (value) animalsStore.setAnimals(value);
+}, {immediate: true})
 
 useHead({
   title: 'Strona główna',
